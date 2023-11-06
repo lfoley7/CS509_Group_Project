@@ -15,11 +15,12 @@ function SiteManagerDashboard(props) {
     // On Render
     useEffect(() => {
         // Getting the Company Names and Adding them to the Dropdown
-        instance.post("***CORRECT PATH HERE***")
+        instance.post("fetchStore")
             .then(function (response) {
-                for (let company in response.data.companyNames) {
+                console.log(response)
+                for (let company of JSON.parse(response.data.body)) {
                     let dropdownItem = document.createElement("option");
-                    dropdownItem.innerHTML = company;
+                    dropdownItem.innerHTML = JSON.stringify(company.STName);
                     document.getElementById("remove-store-options").appendChild(dropdownItem);
                 }
             })

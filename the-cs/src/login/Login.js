@@ -62,8 +62,8 @@ function Login(props) {
                 <div className="login-container">
                     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"></link>
                     <div className="login-label">Login</div>
-                    <div className="email-label">Email</div>
-                    <input id="email-input" type="text" placeholder="Enter Your Email" name="uname" required />
+                    <div className="email-label">Username</div>
+                    <input id="email-input" type="text" placeholder="Enter Your Username" name="uname" required />
                     <div className="pswd-label">Password</div>
                     <div>
                         <input id="pswd" type={showPassword ? "password" : "text"} placeholder="Enter Your Password" name="psw" required />
