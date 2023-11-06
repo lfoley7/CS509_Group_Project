@@ -1,15 +1,27 @@
-//import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./layout/Layout";
+import { React, useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import CustomerDashboard from './customerdashboard/CustomerDashboard';
+import StoreOwnerDashboard from './storeownerdashboard/StoreOwnerDashboard';
+import SiteManagerDashboard from './sitemanagerdashboard/SiteManagerDashboard';
+import Navbar from './navbar/Navbar';
+import Login from "./login/Login";
+import './App.css';
 
 export default function App() {
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [signedIn, setSignedIn] = useState(false);
+
   return (
-    <BrowserRouter>
+    <div>
+      {window.location.pathname != "/login" ? <Navbar signedIn={signedIn}/> : null}
       <Routes>
-        <Route path="/" element={<Layout />}>
-        </Route>
+        <Route path='/' element={<CustomerDashboard email={email} password={password} signedIn={signedIn} />} />
+        <Route path='/login' element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} setSignedIn={setSignedIn} />} />
+        <Route path='/storeownerdashboard' element={<StoreOwnerDashboard email={email} password={password} signedIn={signedIn} />} />
+        <Route path='/sitemanagerdashboard' element={<SiteManagerDashboard email={email} password={password} signedIn={signedIn} />} />
       </Routes>
-    </BrowserRouter>
+    </div>
   );
 }

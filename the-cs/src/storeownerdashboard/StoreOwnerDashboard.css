@@ -1,0 +1,117 @@
+.dashboard-input-search {
+    border: .5px solid rgb(150, 150, 150);
+    border-width: .5px;
+    border-radius: 17px;
+    background-color: white;
+    color: rgb(70, 70, 70);
+    padding: .5em .5em .5em .9em;
+    font-size: 14px !important;
+    margin: 0 5px 0 10px;
+    width: 400px !important;
+}
+
+.dashboard-input-search:hover {
+    border: .5px solid rgb(120, 120, 120);
+    background-color: rgb(235, 235, 235);
+}
+
+.dashboard-input-search::placeholder {
+    color: #C6CACE;
+}
+
+.button-create-project {
+    display: inline-block;
+    color: #FFFFFF;
+    font-weight: 400;
+    background-image: linear-gradient(to right, rgb(255, 209, 220), rgb(247, 195, 210));
+    border: .6666px solid black;
+    border-radius: 3px;
+    letter-spacing: 0.15px;
+    width: 40px;
+    font-size: 14px !important;
+    margin: 5px;
+    width: 200px;
+    height: 35px;
+    padding: .5em .5em .5em .5em;
+    position: relative;
+    bottom: 100%;
+}
+
+.button-create-project:hover {
+    background-image: linear-gradient(to right, rgb(240, 180, 195), rgb(235, 170, 185));
+    color: white;
+    border: 1px solid black;
+}
+
+table,
+th,
+td {
+    border: 1px solid gray;
+    border-collapse: collapse;
+}
+
+table {
+    margin: 2rem 0 0 2rem;
+}
+
+tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.dashboard-data:hover,
+tr:hover {
+    background-color: rgb(230, 230, 230);
+    cursor: pointer;
+}
+
+.title-row {
+    background-image: linear-gradient(to right, rgb(255, 209, 220), rgb(240, 180, 195));
+    color: white;
+}
+
+th,
+td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+tr {
+    background-color: white;
+}
+
+/* Set a style for all buttons */
+.pledgebutton {
+    background-color: #7393B3;
+    color: white;
+    padding: 6px 12px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 80%;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.launchBtn {
+    padding-top: 7%;
+    padding-bottom: 7.4%;
+    height: 100%;
+    width: 100%;
+    background-color: #FFD1DC;
+    color: white;
+    font-weight: 500;
+}
+
+.launchBtn:hover {
+    background-color: rgb(240, 180, 195);
+    cursor: pointer;
+}
+
+.launched {
+    padding-top: 8px;
+}
