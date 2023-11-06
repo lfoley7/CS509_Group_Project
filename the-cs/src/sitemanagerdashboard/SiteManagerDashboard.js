@@ -31,7 +31,7 @@ function SiteManagerDashboard(props) {
         // Reporting the Inventory
         instance.post("reportInventory")
             .then(function (response) {
-                document.getElementById("total-inventory").innerHTML = response.data;
+                document.getElementById("total-inventory").innerHTML = JSON.parse(response.data.body).InventoryTotal;
             })
             .catch(function (error) {
                 console.log(error);
