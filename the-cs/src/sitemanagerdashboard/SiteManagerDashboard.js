@@ -20,7 +20,8 @@ function SiteManagerDashboard(props) {
                 console.log(response)
                 for (let company of JSON.parse(response.data.body)) {
                     let dropdownItem = document.createElement("option");
-                    dropdownItem.innerHTML = JSON.stringify(company.STName);
+                    dropdownItem.innerHTML = company.STName;
+                    dropdownItem.setAttribute("data-UUID", company.StoreID)
                     document.getElementById("remove-store-options").appendChild(dropdownItem);
                 }
             })
@@ -39,18 +40,18 @@ function SiteManagerDashboard(props) {
     });
 
     $(function () {
-        $('#remove-store-button').on("click", () => {
-            const storeID = "12345678-1234-1234-1234-123456789013"; // CHANGE ME TO CORRECT GENERATION OF ID
+        $('#remove-store-button').on("click", async() => {
+            const storeID = $('select option:selected').attr("data-UUID"); // CHANGE ME TO CORRECT GENERATION OF ID
             // API Call to Remove Store from DB
-            instance.post("removeStore", { "storeID": storeID })
+            console.log(storeID)
+            await instance.post("removeStore", { "StoreID": storeID })
                 .then(function (response) {
                     window.alert("Store Removed!");
                 })
                 .catch(function (error) {
                     console.log(error);
                 })
-            // Remove Store from Dropdown
-            $('select option:selected').remove();
+                this.location.reload();
         });
     });
 
