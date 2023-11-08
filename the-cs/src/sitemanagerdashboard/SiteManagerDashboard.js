@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import './SiteManagerDashboard.css';
 import React from 'react';
@@ -11,7 +11,6 @@ const instance = axios.create({
 });
 
 function SiteManagerDashboard(props) {
-
     // On Render
     useEffect(() => {
         // Getting the Company Names and Adding them to the Dropdown
@@ -20,7 +19,7 @@ function SiteManagerDashboard(props) {
                 console.log(response)
                 for (let company of JSON.parse(response.data.body)) {
                     let dropdownItem = document.createElement("option");
-                    dropdownItem.innerHTML = company.STName;
+                    dropdownItem.innerHTML = company.STName + ", $" + company.InventoryBalance;
                     dropdownItem.setAttribute("data-UUID", company.StoreID)
                     document.getElementById("remove-store-options").appendChild(dropdownItem);
                 }
@@ -39,21 +38,18 @@ function SiteManagerDashboard(props) {
             })
     });
 
-    $(function () {
-        $('#remove-store-button').on("click", async() => {
-            const storeID = $('select option:selected').attr("data-UUID"); // CHANGE ME TO CORRECT GENERATION OF ID
-            // API Call to Remove Store from DB
-            console.log(storeID)
-            await instance.post("removeStore", { "StoreID": storeID })
-                .then(function (response) {
-                    window.alert("Store Removed!");
-                })
-                .catch(function (error) {
-                    console.log(error);
-                })
-                this.location.reload();
-        });
-    });
+    const removeStore = async () => {
+        const storeID = $('select option:selected').attr("data-UUID");
+        // API Call to Remove Store from DB
+        await instance.post("removeStore", { "StoreID": storeID })
+            .then(function (response) {
+                window.alert("Store Removed!");
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+        window.location.reload();
+    }
 
     const navigate = useNavigate();
 
@@ -63,7 +59,7 @@ function SiteManagerDashboard(props) {
             <label id="total-inventory"></label>
             <div>{"Remove Store:"}</div>
             <select id="remove-store-options"></select>
-            <button id="remove-store-button">Remove Store</button>
+            <button id="remove-store-button" onClick={removeStore}>Remove Store</button>
         </div>
     )
 };
