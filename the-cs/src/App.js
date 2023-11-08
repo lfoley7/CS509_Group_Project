@@ -12,14 +12,15 @@ export default function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [signedIn, setSignedIn] = useState(false);
+  const [storeID, setStoreID] = useState("");
 
   return (
     <div>
-      {window.location.pathname != "/login" ? <Navbar signedIn={signedIn}/> : null}
+      {window.location.pathname != "/login" ? <Navbar signedIn={signedIn}/> : console.log(window.location.pathname)}
       <Routes>
         <Route path='/' element={<CustomerDashboard email={email} password={password} signedIn={signedIn} />} />
-        <Route path='/login' element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} setSignedIn={setSignedIn} />} />
-        <Route path='/storeownerdashboard' element={<StoreOwnerDashboard email={email} password={password} signedIn={signedIn} />} />
+        <Route path='/login' element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} setSignedIn={setSignedIn} setStoreID={setStoreID} />} />
+        <Route path='/storeownerdashboard' element={<StoreOwnerDashboard email={email} password={password} signedIn={signedIn} storeID={storeID} />} />
         <Route path='/sitemanagerdashboard' element={<SiteManagerDashboard email={email} password={password} signedIn={signedIn} />} />
       </Routes>
     </div>

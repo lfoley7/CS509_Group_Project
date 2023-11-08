@@ -20,26 +20,30 @@ function Login(props) {
         let password = document.getElementById("pswd").value;
 
         /* TO DO: Comment out below 3 lines when instance.post is working*/
-        props.setEmail("luke.c.foley@gmail.com");
-        props.setPassword("Kodiak123!");
+        props.setEmail(document.getElementsByClassName("email-input")[0]);
+        props.setPassword(document.getElementsByClassName("pswd")[0]);
         props.setSignedIn(true);
-        navigate("/storeownerdashboard");
 
-        /* TO DO: Use correct path and make sure code works*/
-        /*
-        instance.post("*CORRECT PATH HERE*", { "email": email, "password": password, "accountType": type })
+        instance.post("login", { "STUsername": email, "STPassword": password })
             .then(function (response) {
                 props.setEmail(email);
                 props.setPassword(password);
                 props.setSignedIn(true);
-                navigationUrl = "/" + type + "dashboard";
-                navigate(navigationUrl);
+                let type = response.data.body;
+                type = type.slice(1, type.length - 1);
+                if (type == "") {
+                    window.alert("No store associated with account");
+                } else if (type == "Site manager") {
+                    navigate("/sitemanagerdashboard");
+                } else {
+                    props.setStoreID(JSON.parse(type).StoreID);
+                    navigate("/storeownerdashboard");
+                }
             })
             .catch(function (error) {
                 window.alert(error.response.data.error);
                 console.log(error);
             })
-        */
     }
 
     return (
