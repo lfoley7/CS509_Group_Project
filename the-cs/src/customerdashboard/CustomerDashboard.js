@@ -15,9 +15,7 @@ function CustomerDashboard(props) {
 
     const createStore = () => {
         const StoreID = uuidv4(); // CHANGE ME TO CORRECT GENERATION OF ID
-        console.log(StoreID);
         const STName = document.getElementById("create-store-name").value;
-        console.log(STName);
         const STLatitude = +document.getElementById("x-coordinate").value;
         const STLongitude = +document.getElementById("y-coordinate").value;
         const STUsername = document.getElementById("create-username").value;

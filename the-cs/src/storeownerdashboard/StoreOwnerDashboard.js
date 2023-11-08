@@ -21,8 +21,8 @@ function StoreOwnerDashboard(props) {
         const StoreID = props.storeID; // CHANGE ME TO CORRECT GENERATION OF ID
         const CName = document.getElementById("CName").value;
         const CPrice = +document.getElementById("CPrice").value;
-        const CMemory = +document.getElementById("CMemory").value;
-        const CStorageSize = +document.getElementById("CStorageSize").value;
+        const CMemory = document.getElementById("CMemory").value;
+        const CStorageSize = document.getElementById("CStorageSize").value;
         const CProcessor = +document.getElementById("CProcessor").value;
         const CProcessorGen = +document.getElementById("CProcessorGen").value;
         const CGraphics = +document.getElementById("CGraphics").value;

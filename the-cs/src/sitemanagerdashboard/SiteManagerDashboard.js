@@ -16,7 +16,6 @@ function SiteManagerDashboard(props) {
         // Getting the Company Names and Adding them to the Dropdown
         instance.post("fetchStore")
             .then(function (response) {
-                console.log(response)
                 for (let company of JSON.parse(response.data.body)) {
                     let dropdownItem = document.createElement("option");
                     dropdownItem.innerHTML = company.STName + ", $" + company.InventoryBalance;
@@ -39,9 +38,9 @@ function SiteManagerDashboard(props) {
     });
 
     const removeStore = async () => {
-        const storeID = $('select option:selected').attr("data-UUID");
+        const StoreID = $('select option:selected').attr("data-UUID");
         // API Call to Remove Store from DB
-        await instance.post("removeStore", { "StoreID": storeID })
+        await instance.post("removeStore", { "StoreID": StoreID })
             .then(function (response) {
                 window.alert("Store Removed!");
             })

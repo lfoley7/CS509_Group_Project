@@ -16,7 +16,7 @@ export default function App() {
 
   return (
     <div>
-      {window.location.pathname != "/login" ? <Navbar signedIn={signedIn}/> : console.log(window.location.pathname)}
+      {window.location.pathname != "/login" ? <Navbar signedIn={signedIn}/> : null}
       <Routes>
         <Route path='/' element={<CustomerDashboard email={email} password={password} signedIn={signedIn} />} />
         <Route path='/login' element={<Login email={email} setEmail={setEmail} password={password} setPassword={setPassword} setSignedIn={setSignedIn} setStoreID={setStoreID} />} />
