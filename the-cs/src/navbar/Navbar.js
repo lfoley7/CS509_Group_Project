@@ -25,7 +25,7 @@ function Navbar(props) {
             <nav className="navbar navbar-expand-lg navbar-light bg-light" id="navbar"
                 style={{ backgroundColor: "rgba(42,87,131,1)" }}>
                 <div className="content-container">
-                    <i className="the-cs">The CS</i>
+                    <i className="the-cs"  onClick={() => { onHandleNavClick("/")}}>The CS</i>
                     {!signedIn ?
                         <div className="nav-bar--dropdown">
                             <button
