@@ -25,12 +25,21 @@ function SiteManagerDashboard(props) {
             })
             .catch(function (error) {
                 console.log(error);
-            })
+            });
 
         // Reporting the Inventory
         instance.post("reportInventory")
             .then(function (response) {
-                document.getElementById("total-inventory").innerHTML = JSON.parse(response.data.body).InventoryTotal;
+                document.getElementById("total-sitewide-listing-value").innerHTML = "$" + JSON.parse(response.data.body).InventoryTotal;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+        instance.post("FetchSMBalance")
+            .then(function (response) {
+                console.log(response);
+                //document.getElementById("total-site-manager-balance").innerHTML = "$" + JSON.parse(response.data.body);
             })
             .catch(function (error) {
                 console.log(error);
@@ -54,8 +63,10 @@ function SiteManagerDashboard(props) {
 
     return (
         <div className="container">
-            <div>{"Total Inventory: "}</div>
-            <label id="total-inventory"></label>
+            <div>{"Total Sitewide Listing Value: "}</div>
+            <label id="total-sitewide-listing-value"></label>
+            <div>{"Total Site Manager Balance: "}</div>
+            <label id="total-site-manager-balance"></label>
             <div>{"Remove Store:"}</div>
             <select id="remove-store-options"></select>
             <button id="remove-store-button" onClick={removeStore}>Remove Store</button>

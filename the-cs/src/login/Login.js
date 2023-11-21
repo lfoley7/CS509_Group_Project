@@ -8,6 +8,7 @@ const instance = axios.create({
 });
 
 function Login(props) {
+    console.log(window.location.pathname);
     const [showPassword, setShowPassword] = useState(true);
     const navigate = useNavigate();
 
@@ -79,7 +80,7 @@ function Login(props) {
                         verifyAccount();
                     }}>Login</button>
                     <div>
-                        <label>Don't have an account?&nbsp;</label>
+                        <label>Want to become a Store Owner?&nbsp;</label>
                         <a onClick={() => { navigate("/register"); }}>Click here to register!</a>
                     </div>
                     <div className="copy-right">Powered by team Nanga Parbat</div>

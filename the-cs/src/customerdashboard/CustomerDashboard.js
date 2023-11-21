@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import './CustomerDashboard.css';
+import $ from 'jquery';
 import { v4 as uuidv4 } from 'uuid';
 
 const instance = axios.create({
@@ -11,18 +12,70 @@ const instance = axios.create({
 
 function CustomerDashboard(props) {
 
+    const PROCESSORGEN = ["13th Gen Intel", "12th Gen Intel", "11th Gen Intel", "AMD RYZEN 7000", "AMD RYZEN 6000"];
+    const PROCESSOR = ["Intel Xeon", "Intel i9", "Intel i7", "AMD Ryzen 9", "AMD Ryzen 7"];
+    const GRAPHICS = ["NVIDIA GeForce RTX 4090", "NVIDIA GeForce RTX 4080", "AMD Radeon Pro W6300",
+        "AMD Radeon Pro W6400", "Intel Integrated Graphics", "Intel UHD Graphics 730", "Intel UHD Graphics 770"];
+
     const navigate = useNavigate();
 
-    const createStore = () => {
-        const StoreID = uuidv4(); // CHANGE ME TO CORRECT GENERATION OF ID
-        const STName = document.getElementById("create-store-name").value;
-        const STLatitude = +document.getElementById("x-coordinate").value;
-        const STLongitude = +document.getElementById("y-coordinate").value;
-        const STUsername = document.getElementById("create-username").value;
-        const STPassword = document.getElementById("create-password").value;
-        instance.post("createStore", { "StoreID": StoreID, "STName": STName, "STLatitude": STLatitude, "STLongitude": STLongitude, "STUsername": STUsername, "STPassword": STPassword })
+    useEffect(() => {
+        // Getting the Company Names and Adding them to the Dropdown and Table
+        instance.post("fetchStore")
             .then(function (response) {
-                window.alert("Store added!");
+                for (let company of JSON.parse(response.data.body)) {
+                    let tableItem = document.createElement("td");
+                    tableItem.innerHTML = company.STName;
+                    tableItem.setAttribute("data-UUID", company.StoreID)
+                    document.getElementById("all-stores").appendChild(tableItem);
+
+                    let dropdownItem = document.createElement("option");
+                    dropdownItem.innerHTML = company.STName;
+                    dropdownItem.setAttribute("data-UUID", company.StoreID)
+                    document.getElementById("inventory-store-options").appendChild(dropdownItem);
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    })
+
+    const generateInventoryClick = () => {
+        const StoreID = $('select option:selected').attr("data-UUID");
+        console.log(StoreID);
+        instance.post("generateInventory", { "StoreID": StoreID })
+            .then(function (response) {
+                let tr = document.getElementById("generate-inventory-table");
+                if (tr.childNodes.length > 0) {
+                    while (tr.childNodes.length > 0) {
+                        tr.childNodes[tr.childNodes.length - 1].remove();
+                    }
+                }
+                for (let computer of JSON.parse(response.data.body)) {
+                    const inventoryRow = document.createElement("tr");
+                    const name = document.createElement("td");
+                    name.innerHTML = computer.CName;
+                    const price = document.createElement("td");
+                    price.innerHTML = computer.CPrice;
+                    const memory = document.createElement("td");
+                    memory.innerHTML = computer.CMemory;
+                    const storageSize = document.createElement("td");
+                    storageSize.innerHTML = computer.CStorageSize;
+                    const processor = document.createElement("td");
+                    processor.innerHTML = PROCESSOR[+computer.CProcessor - 1];
+                    const processorGen = document.createElement("td");
+                    processorGen.innerHTML = PROCESSORGEN[+computer.CProcessorGen - 1];
+                    const graphics = document.createElement("td");
+                    graphics.innerHTML = GRAPHICS[+computer.CGraphics - 1];
+                    inventoryRow.appendChild(name);
+                    inventoryRow.appendChild(price);
+                    inventoryRow.appendChild(memory);
+                    inventoryRow.appendChild(storageSize);
+                    inventoryRow.appendChild(processor);
+                    inventoryRow.appendChild(processorGen);
+                    inventoryRow.appendChild(graphics);
+                    document.getElementById("generate-inventory-table").appendChild(inventoryRow);
+                }
             })
             .catch(function (error) {
                 console.log(error);
@@ -31,20 +84,32 @@ function CustomerDashboard(props) {
 
     return (
         <div style={{ position: "relative", textAlign: "center", top: "5rem", whiteSpace: "pre-line" }}>
-            {"Welcome to the Customer Dashboard!\nClick \"Sign in\" to go to the login page and sign into a different account type!"}
-            {"\n\nWant to become a store owner? Do so below!\n\n"}
-            <div>{"Create Store:"}</div>
-            <label>{"Username: "}</label>
-            <input id="create-username"></input>
-            <label>{"Password: "}</label>
-            <input id="create-password"></input>
-            <label>{"Store Name: "}</label>
-            <input id="create-store-name"></input>
-            <label>{" X Coordinate: "}</label>
-            <input id="x-coordinate" style={{ width: "4rem" }}></input>
-            <label>{" Y Coordinate: "}</label>
-            <input id="y-coordinate" style={{ width: "4rem" }}></input>
-            <button onClick={createStore}>{"Create Store"}</button>
+            <table>
+                <thead>
+                    <tr>
+                        Store Names:
+                    </tr>
+                </thead>
+                <tbody id="all-stores">
+                </tbody>
+            </table>
+            <select id="inventory-store-options"></select>
+            <button onClick={generateInventoryClick}>{"Generate Selected Store Inventory"}</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Memory</th>
+                        <th>Storage Size</th>
+                        <th>Processor</th>
+                        <th>Processor Gen</th>
+                        <th>Graphics</th>
+                    </tr>
+                </thead>
+                <tbody id="generate-inventory-table">
+                </tbody>
+            </table>
         </div>
     )
 };

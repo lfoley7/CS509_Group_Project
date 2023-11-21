@@ -39,10 +39,21 @@ function StoreOwnerDashboard(props) {
             });
     }
 
+    const removeComputer = (ComputerID) => {
+        instance.post("RemoveComputer", { "ComputerID": ComputerID })
+            .then(function (response) {
+                window.alert("Computer Removed!");
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
     const generateInventory = () => {
         const StoreID = props.storeID; // CHANGE ME TO CORRECT GENERATION OF ID
         instance.post("generateInventory", { "StoreID": StoreID })
             .then(function (response) {
+                console.log(response);
                 let tr = document.getElementById("generate-inventory-table");
                 if (tr.childNodes.length > 0) {
                     while (tr.childNodes.length > 0) {
@@ -65,6 +76,9 @@ function StoreOwnerDashboard(props) {
                     processorGen.innerHTML = PROCESSORGEN[+computer.CProcessorGen - 1];
                     const graphics = document.createElement("td");
                     graphics.innerHTML = GRAPHICS[+computer.CGraphics - 1];
+                    const removeComputerBtn = document.createElement("button");
+                    removeComputerBtn.innerHTML = "Remove";
+                    removeComputerBtn.onClick = removeComputer(computer.ComputerID);
                     inventoryRow.appendChild(name);
                     inventoryRow.appendChild(price);
                     inventoryRow.appendChild(memory);
@@ -72,9 +86,13 @@ function StoreOwnerDashboard(props) {
                     inventoryRow.appendChild(processor);
                     inventoryRow.appendChild(processorGen);
                     inventoryRow.appendChild(graphics);
+                    inventoryRow.appendChild(removeComputerBtn);
                     document.getElementById("generate-inventory-table").appendChild(inventoryRow);
                 }
             })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
     return (
@@ -127,6 +145,7 @@ function StoreOwnerDashboard(props) {
                         <th>Processor</th>
                         <th>Processor Gen</th>
                         <th>Graphics</th>
+                        <th>Remove Store</th>
                     </tr>
                 </thead>
                 <tbody id="generate-inventory-table">
