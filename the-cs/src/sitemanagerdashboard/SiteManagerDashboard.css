@@ -1,7 +1,24 @@
+.sm-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 5rem;
+    text-align: center;
+    padding-left: 5rem;
+    padding-right: 5rem;
+    gap: 2rem;
+}
+
 .container {
     position: relative;
     margin-top: 5rem;
     text-align: center;
+}
+
+.table-sm {
+    width: 100%;
+    margin-left: 0;
 }
 
 .dashboard-input-search {
@@ -54,10 +71,6 @@ th,
 td {
     border: 1px solid gray;
     border-collapse: collapse;
-}
-
-table {
-    margin: 2rem 0 0 2rem;
 }
 
 tr {

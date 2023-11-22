@@ -40,7 +40,7 @@ function StoreOwnerDashboard(props) {
     }
 
     const removeComputer = (ComputerID) => {
-        instance.post("RemoveComputer", { "ComputerID": ComputerID })
+        instance.post("removecomputer", { "ComputerID": ComputerID })
             .then(function (response) {
                 window.alert("Computer Removed!");
             })
@@ -78,7 +78,9 @@ function StoreOwnerDashboard(props) {
                     graphics.innerHTML = GRAPHICS[+computer.CGraphics - 1];
                     const removeComputerBtn = document.createElement("button");
                     removeComputerBtn.innerHTML = "Remove";
-                    removeComputerBtn.onClick = removeComputer(computer.ComputerID);
+                    removeComputerBtn.onclick = function () {
+                        removeComputer(computer.ComputerID);
+                    }
                     inventoryRow.appendChild(name);
                     inventoryRow.appendChild(price);
                     inventoryRow.appendChild(memory);
@@ -135,22 +137,24 @@ function StoreOwnerDashboard(props) {
             <button onClick={addComputer}>{"Add Computer"}</button>
             <br /><br />
             <button onClick={generateInventory}>{"Generate Inventory"}</button>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Memory</th>
-                        <th>Storage Size</th>
-                        <th>Processor</th>
-                        <th>Processor Gen</th>
-                        <th>Graphics</th>
-                        <th>Remove Store</th>
-                    </tr>
-                </thead>
-                <tbody id="generate-inventory-table">
-                </tbody>
-            </table>
+            <div className="sm-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Memory</th>
+                            <th>Storage Size</th>
+                            <th>Processor</th>
+                            <th>Processor Gen</th>
+                            <th>Graphics</th>
+                            <th>Remove Computer</th>
+                        </tr>
+                    </thead>
+                    <tbody id="generate-inventory-table">
+                    </tbody>
+                </table>
+            </div>
         </div>
     )
 };

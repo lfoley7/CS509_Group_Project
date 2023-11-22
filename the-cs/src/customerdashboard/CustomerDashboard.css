@@ -19,6 +19,23 @@
     color: #C6CACE;
 }
 
+#inventory-store-options {
+    width: 10rem;
+}
+
+.generate-table-item {
+    /* display: flex;
+    flex-direction: column;
+    align-content: center; */
+    gap: 2rem;
+}
+
+.generate-table-row {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+}
+
 .button-create-project {
     display: inline-block;
     color: #FFFFFF;
@@ -48,10 +65,6 @@ th,
 td {
     border: 1px solid gray;
     border-collapse: collapse;
-}
-
-table {
-    margin: 2rem 0 0 2rem;
 }
 
 tr {

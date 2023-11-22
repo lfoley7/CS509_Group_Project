@@ -50,10 +50,6 @@ td {
     border-collapse: collapse;
 }
 
-table {
-    margin: 2rem 0 0 2rem;
-}
-
 tr {
     border-bottom: 1px solid #ddd;
 }

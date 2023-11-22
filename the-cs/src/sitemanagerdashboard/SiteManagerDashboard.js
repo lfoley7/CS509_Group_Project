@@ -17,10 +17,34 @@ function SiteManagerDashboard(props) {
         instance.post("fetchStore")
             .then(function (response) {
                 for (let company of JSON.parse(response.data.body)) {
-                    let dropdownItem = document.createElement("option");
-                    dropdownItem.innerHTML = company.STName + ", $" + company.InventoryBalance;
-                    dropdownItem.setAttribute("data-UUID", company.StoreID)
-                    document.getElementById("remove-store-options").appendChild(dropdownItem);
+                    let tableRow = document.createElement("tr");
+                    let tableItemName = document.createElement("td");
+                    tableItemName.innerHTML = company.STName;
+                    tableItemName.setAttribute("data-UUID", company.StoreID);
+                    let tableItemBalance = document.createElement("td");
+                    tableItemBalance.innerHTML = company.Balance;
+                    let tableItemInventoryValue = document.createElement("td");
+                    tableItemInventoryValue.innerHTML = company.InventoryBalance;
+                    let tableItemRemoveTD = document.createElement("td");
+                    let tableItemRemove = document.createElement("button");
+                    tableItemRemove.innerHTML = "Remove Store";
+                    tableItemRemove.onclick = async function () {
+                        // API Call to Remove Store from DB
+                        await instance.post("removeStore", { "StoreID": company.StoreID })
+                            .then(function (response) {
+                                window.alert("Store Removed!");
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
+                        window.location.reload();
+                    };
+                    tableItemRemoveTD.appendChild(tableItemRemove)
+                    tableRow.appendChild(tableItemName);
+                    tableRow.appendChild(tableItemBalance);
+                    tableRow.appendChild(tableItemInventoryValue);
+                    tableRow.appendChild(tableItemRemoveTD);
+                    document.getElementById("all-stores").appendChild(tableRow);
                 }
             })
             .catch(function (error) {
@@ -36,18 +60,16 @@ function SiteManagerDashboard(props) {
                 console.log(error);
             });
 
-        instance.post("FetchSMBalance")
+        instance.post("fetchSMBalance")
             .then(function (response) {
-                console.log(response);
-                //document.getElementById("total-site-manager-balance").innerHTML = "$" + JSON.parse(response.data.body);
+                document.getElementById("total-site-manager-balance").innerHTML = "$" + JSON.parse(response.data.body)[0].SMBalance;
             })
             .catch(function (error) {
                 console.log(error);
             })
     });
 
-    const removeStore = async () => {
-        const StoreID = $('select option:selected').attr("data-UUID");
+    const removeStore = async (StoreID) => {
         // API Call to Remove Store from DB
         await instance.post("removeStore", { "StoreID": StoreID })
             .then(function (response) {
@@ -62,14 +84,31 @@ function SiteManagerDashboard(props) {
     const navigate = useNavigate();
 
     return (
-        <div className="container">
-            <div>{"Total Sitewide Listing Value: "}</div>
+        <div className="sm-container">
+            <div>{"Total Site Inventory Value: "}</div>
             <label id="total-sitewide-listing-value"></label>
-            <div>{"Total Site Manager Balance: "}</div>
+            <div>{"Site Manager Balance: "}</div>
             <label id="total-site-manager-balance"></label>
-            <div>{"Remove Store:"}</div>
-            <select id="remove-store-options"></select>
-            <button id="remove-store-button" onClick={removeStore}>Remove Store</button>
+            <table className="table-sm">
+                <thead>
+                    <tr>
+                        <th>
+                            Store Names
+                        </th>
+                        <th>
+                            Balance
+                        </th>
+                        <th>
+                            Inventory Value
+                        </th>
+                        <th>
+                            Remove Store
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="all-stores">
+                </tbody>
+            </table>
         </div>
     )
 };

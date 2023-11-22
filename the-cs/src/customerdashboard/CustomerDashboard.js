@@ -25,14 +25,16 @@ function CustomerDashboard(props) {
             .then(function (response) {
                 for (let company of JSON.parse(response.data.body)) {
                     let tableItem = document.createElement("td");
+                    tableItem.className = "generate-table-item"
                     tableItem.innerHTML = company.STName;
                     tableItem.setAttribute("data-UUID", company.StoreID)
+                    let tableGenerateButton = document.createElement("button");
+                    tableGenerateButton.innerHTML = "Generate Inventory"
+                    tableGenerateButton.onclick = () => { generateInventoryClick(company.StoreID) }
+                    let br = document.createElement("br");
+                    tableItem.appendChild(br);
+                    tableItem.appendChild(tableGenerateButton);
                     document.getElementById("all-stores").appendChild(tableItem);
-
-                    let dropdownItem = document.createElement("option");
-                    dropdownItem.innerHTML = company.STName;
-                    dropdownItem.setAttribute("data-UUID", company.StoreID)
-                    document.getElementById("inventory-store-options").appendChild(dropdownItem);
                 }
             })
             .catch(function (error) {
@@ -40,9 +42,7 @@ function CustomerDashboard(props) {
             });
     })
 
-    const generateInventoryClick = () => {
-        const StoreID = $('select option:selected').attr("data-UUID");
-        console.log(StoreID);
+    const generateInventoryClick = (StoreID) => {
         instance.post("generateInventory", { "StoreID": StoreID })
             .then(function (response) {
                 let tr = document.getElementById("generate-inventory-table");
@@ -83,7 +83,11 @@ function CustomerDashboard(props) {
     }
 
     return (
-        <div style={{ position: "relative", textAlign: "center", top: "5rem", whiteSpace: "pre-line" }}>
+        <div className="sm-container">
+            <div>
+                <label>Want to become a Store Owner?&nbsp;</label>
+                <a onClick={() => { navigate("/register"); }}>Click here to register!</a>
+            </div>
             <table>
                 <thead>
                     <tr>
@@ -93,8 +97,8 @@ function CustomerDashboard(props) {
                 <tbody id="all-stores">
                 </tbody>
             </table>
-            <select id="inventory-store-options"></select>
-            <button onClick={generateInventoryClick}>{"Generate Selected Store Inventory"}</button>
+            {/* <select id="inventory-store-options"></select>
+            <button onClick={generateInventoryClick}>{"Generate Selected Store Inventory"}</button> */}
             <table>
                 <thead>
                     <tr>
