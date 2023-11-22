@@ -22,9 +22,9 @@ function SiteManagerDashboard(props) {
                     tableItemName.innerHTML = company.STName;
                     tableItemName.setAttribute("data-UUID", company.StoreID);
                     let tableItemBalance = document.createElement("td");
-                    tableItemBalance.innerHTML = company.Balance;
+                    tableItemBalance.innerHTML = "$" + company.Balance;
                     let tableItemInventoryValue = document.createElement("td");
-                    tableItemInventoryValue.innerHTML = company.InventoryBalance;
+                    tableItemInventoryValue.innerHTML = "$" + company.InventoryBalance;
                     let tableItemRemoveTD = document.createElement("td");
                     let tableItemRemove = document.createElement("button");
                     tableItemRemove.innerHTML = "Remove Store";
@@ -54,7 +54,7 @@ function SiteManagerDashboard(props) {
         // Reporting the Inventory
         instance.post("reportInventory")
             .then(function (response) {
-                document.getElementById("total-sitewide-listing-value").innerHTML = "$" + JSON.parse(response.data.body).InventoryTotal;
+                document.getElementById("total-sitewide-listing-value").innerHTML = "Total Site Inventory Value: $" + JSON.parse(response.data.body).InventoryTotal;
             })
             .catch(function (error) {
                 console.log(error);
@@ -62,7 +62,7 @@ function SiteManagerDashboard(props) {
 
         instance.post("fetchSMBalance")
             .then(function (response) {
-                document.getElementById("total-site-manager-balance").innerHTML = "$" + JSON.parse(response.data.body)[0].SMBalance;
+                document.getElementById("total-site-manager-balance").innerHTML = "Site Manager Balance: $" + JSON.parse(response.data.body)[0].SMBalance;
             })
             .catch(function (error) {
                 console.log(error);
@@ -85,9 +85,9 @@ function SiteManagerDashboard(props) {
 
     return (
         <div className="sm-container">
-            <div>{"Total Site Inventory Value: "}</div>
+            {/* <div>{"Total Site Inventory Value: "}</div> */}
             <label id="total-sitewide-listing-value"></label>
-            <div>{"Site Manager Balance: "}</div>
+            {/* <div>{"Site Manager Balance: "}</div> */}
             <label id="total-site-manager-balance"></label>
             <table className="table-sm">
                 <thead>

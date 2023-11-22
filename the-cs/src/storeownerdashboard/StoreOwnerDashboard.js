@@ -76,8 +76,11 @@ function StoreOwnerDashboard(props) {
                     processorGen.innerHTML = PROCESSORGEN[+computer.CProcessorGen - 1];
                     const graphics = document.createElement("td");
                     graphics.innerHTML = GRAPHICS[+computer.CGraphics - 1];
+
+                    const remove = document.createElement("td");
                     const removeComputerBtn = document.createElement("button");
                     removeComputerBtn.innerHTML = "Remove";
+                    remove.appendChild(removeComputerBtn);
                     removeComputerBtn.onclick = function () {
                         removeComputer(computer.ComputerID);
                     }
@@ -88,7 +91,7 @@ function StoreOwnerDashboard(props) {
                     inventoryRow.appendChild(processor);
                     inventoryRow.appendChild(processorGen);
                     inventoryRow.appendChild(graphics);
-                    inventoryRow.appendChild(removeComputerBtn);
+                    inventoryRow.appendChild(remove);
                     document.getElementById("generate-inventory-table").appendChild(inventoryRow);
                 }
             })
@@ -134,9 +137,8 @@ function StoreOwnerDashboard(props) {
                 <option value="6">{"Intel UHD Graphics 730"}</option>
                 <option value="7">{"Intel UHD Graphics 770"}</option>
             </select>
-            <button onClick={addComputer}>{"Add Computer"}</button>
             <br /><br />
-            <button onClick={generateInventory}>{"Generate Inventory"}</button>
+            <button onClick={addComputer}>{"Add Computer"}</button>
             <div className="sm-container">
                 <table>
                     <thead>
@@ -155,6 +157,8 @@ function StoreOwnerDashboard(props) {
                     </tbody>
                 </table>
             </div>
+            <br /><br />
+            <button onClick={generateInventory}>{"Generate Inventory"}</button>
         </div>
     )
 };
