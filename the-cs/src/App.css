@@ -43,3 +43,73 @@ html {
     transform: rotate(360deg);
   }
 }
+
+
+
+
+
+/* Global CSS */
+.Content-Container {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  background-color: gainsboro;
+  height: calc(100vh - 6rem);
+  width: 100wh;
+  margin: 5rem 1rem;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.Table-Container{
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  border-radius: 0.5rem;
+}
+
+.Filter-Container{
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: center;
+  width: 30rem;
+  height: 100%;
+  background-color: white;
+  border-radius: 0.5rem;
+}
+
+.Table-Custom{
+  width: 100%;
+  border: none;
+}
+
+.Table-Custom th {
+  text-align: center;
+  font-size: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.Table-Custom tr {
+  text-align: center;
+  font-size: 0.75rem;
+}
+
+.Filter-Item {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  border-bottom: solid gainsboro 1px;
+  text-align: center;
+  padding: 1rem;
+  gap: 0.5rem;
+}
