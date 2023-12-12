@@ -55,7 +55,7 @@ html {
   flex-direction: row;
   align-items: center;
   background-color: gainsboro;
-  height: calc(100vh - 6rem);
+  height: calc(100vh - 8rem);
   width: 100wh;
   margin: 5rem 1rem;
   border-radius: 0.5rem;

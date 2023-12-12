@@ -23,6 +23,7 @@ function CustomerDashboard(props) {
         "AMD Radeon Pro W6400", "Intel Integrated Graphics", "Intel UHD Graphics 730", "Intel UHD Graphics 770"];
     const navigate = useNavigate();
 
+    ////Multi Select
     const fetchStores = async () => {
         try {
             const response = await instance.post("fetchStore");
@@ -65,7 +66,13 @@ function CustomerDashboard(props) {
                         onChange={handleChange}
                         onOpen={handleOpen}
                         input={<OutlinedInput label={label} />}
-                        renderValue={(selected) => selected.join(', ')}
+                        renderValue={(selected) => {
+                            const selectedNames = selected.map(storeID => {
+                                const selectedStore = storeNames.find(name => name.StoreID === storeID);
+                                return selectedStore ? selectedStore.STName : '';
+                            });
+                            return selectedNames.join(', ');
+                        }}
                     >
                         {storeNames.length > 0 ? (
                             storeNames.map((name) => (
@@ -80,7 +87,8 @@ function CustomerDashboard(props) {
             </div>
         );
     };
-
+    ////Multi Select
+    
     const generateInventoryCustomerClick = (StoreIDs) => {
         instance.post("GenerateInventoryCustomer", { "StoreIDs": StoreIDs })
             .then(function (response) {
