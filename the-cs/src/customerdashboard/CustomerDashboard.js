@@ -10,6 +10,7 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
+import { Button } from "@mui/material";
 
 const instance = axios.create({
     baseURL: 'https://iggshnplye.execute-api.us-east-2.amazonaws.com/Initial/'
@@ -233,6 +234,19 @@ function CustomerDashboard(props) {
                     processorGen.innerHTML = PROCESSORGEN[+computer.CProcessorGen - 1];
                     const graphics = document.createElement("td");
                     graphics.innerHTML = GRAPHICS[+computer.CGraphics - 1];
+                    const buy = document.createElement("td");
+                    let buyButton = document.createElement("button")
+                    buyButton.innerHTML = "Buy Now!"
+                    buyButton.onclick = async function () {
+                        await instance.post("buyComputer", {"ComputerID": computer.ComputerID})
+                            .then(function (response) {
+                                window.alert("Computer Bought");
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
+                        window.location.reload();
+                    }
                     inventoryRow.appendChild(storeName);
                     inventoryRow.appendChild(name);
                     inventoryRow.appendChild(graphics);
@@ -241,6 +255,7 @@ function CustomerDashboard(props) {
                     inventoryRow.appendChild(memory);
                     inventoryRow.appendChild(storageSize);
                     inventoryRow.appendChild(price);
+                    inventoryRow.appendChild(buyButton);
                     document.getElementById("generate-inventory-table").appendChild(inventoryRow);
                 }
             })
@@ -291,6 +306,7 @@ function CustomerDashboard(props) {
                             <th>Memory</th>
                             <th>Storage Size</th>
                             <th>Price</th>
+                            <th>Buy</th>
                         </tr>
                     </thead>
                     <tbody id="generate-inventory-table">
