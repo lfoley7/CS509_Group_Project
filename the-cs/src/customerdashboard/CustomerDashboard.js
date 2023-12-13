@@ -121,13 +121,13 @@ function CustomerDashboard(props) {
 
                 switch (label){
                     case "Graphics":
-                        filterGraphics = value.map(graphics => GRAPHICS.indexOf(graphics)).filter(index => index !== -1);
+                        filterGraphics = value.map(graphics => GRAPHICS.indexOf(graphics)+1).filter(index => index !== 0);
                         break;
                     case "Processor Generations":
-                        filterProcessorGen = value.map(procGen => PROCESSORGEN.indexOf(procGen)).filter(index => index !== -1);
+                        filterProcessorGen = value.map(procGen => PROCESSORGEN.indexOf(procGen)+1).filter(index => index !== 0);
                         break;
                     case "Processors":
-                        filterProcessors = value.map(processor => PROCESSOR.indexOf(processor)).filter(index => index !== -1);
+                        filterProcessors = value.map(processor => PROCESSOR.indexOf(processor)+1).filter(index => index !== 0);
                         break;
                     case "Storage Size":
                         filterStorageSize = value.map(storage => storageMappings[STORAGE.indexOf(storage)]);
@@ -136,7 +136,7 @@ function CustomerDashboard(props) {
                         filterMemory = value.map(memory => memoryMappings[MEMORY.indexOf(memory)]);
                         break;
                 }
-
+                
                 filters = [filterGraphics, filterProcessorGen, filterProcessors, filterStorageSize, filterMemory];
                 generateInventoryCustomerClick(storeIDs, priceSort, filters);
             }
@@ -173,12 +173,15 @@ function CustomerDashboard(props) {
             </div>
         );
     };
-    ////Multi Select
 
-    const generateInventoryCustomerClick = (StoreIDs, PriceSort, Filters) => {
-        console.log(StoreIDs);
-        console.log(PriceSort);
-        console.log(Filters);
+    const generateInventoryCustomerClick = async (StoreIDs, PriceSort, Filters) => {
+        // console.log(StoreIDs);
+        // console.log(PriceSort);
+        // console.log(Filters);
+
+        if (!StoreIDs || StoreIDs.length === 0) {
+            StoreIDs = (await fetchStores()).map(store => store.StoreID);
+        }
 
         if (!Filters[0] || Filters[0].length === 0) {
             Filters[0] = Array.from({ length: GRAPHICS.length }, (_, index) => index);
@@ -241,6 +244,7 @@ function CustomerDashboard(props) {
                 console.log(error);
             });
     }
+    ////Multi Select
 
     return (
         <div className="Content-Container">
