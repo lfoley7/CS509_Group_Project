@@ -19,9 +19,23 @@ function CustomerDashboard(props) {
 
     const PROCESSORGEN = ["13th Gen Intel", "12th Gen Intel", "11th Gen Intel", "AMD RYZEN 7000", "AMD RYZEN 6000"];
     const PROCESSOR = ["Intel Xeon", "Intel i9", "Intel i7", "AMD Ryzen 9", "AMD Ryzen 7"];
-    const GRAPHICS = ["NVIDIA GeForce RTX 4090", "NVIDIA GeForce RTX 4080", "AMD Radeon Pro W6300",
-        "AMD Radeon Pro W6400", "Intel Integrated Graphics", "Intel UHD Graphics 730", "Intel UHD Graphics 770"];
+    const GRAPHICS = ["NVIDIA GeForce RTX 4090", "NVIDIA GeForce RTX 4080", "AMD Radeon Pro W6300", "AMD Radeon Pro W6400", "Intel Integrated Graphics", "Intel UHD Graphics 730", "Intel UHD Graphics 770"];
+
+    const STORAGE = ["128GB", "256GB", "512GB", "1TB", "2TB"];
+    const MEMORY = ["1GB", "4GB", "8GB", "12GB", "16GB", "32GB"];
+    const storageMappings = ["128", "256", "512", "1000", "2000"];
+    const memoryMappings = ["1", "4", "8", "12", "16", "32"];
+
     const navigate = useNavigate();
+
+    let storeIDs;
+    let filters;
+    let filterGraphics;
+    let filterProcessorGen;
+    let filterProcessors;
+    let filterStorageSize;
+    let filterMemory;
+    let priceSort;
 
     ////Multi Select
     const fetchStores = async () => {
@@ -43,7 +57,8 @@ function CustomerDashboard(props) {
                 target: { value },
             } = event;
             setSelectionName( typeof value === 'string' ? value.split(',') : value, );
-            generateInventoryCustomerClick(value);
+            storeIDs = value;
+            generateInventoryCustomerClick(storeIDs, priceSort, filters);
         };
     
         const handleOpen = async () => {
@@ -56,7 +71,7 @@ function CustomerDashboard(props) {
     
         return (
             <div>
-                <FormControl sx={{ m: 1, width: 300 }}>
+                <FormControl sx={{ m: 1, width: 250 }}>
                     <InputLabel id={`multiple-checkbox-label-${label}`}>{label}</InputLabel>
                     <Select
                         labelId={`multiple-checkbox-label-${label}`}
@@ -87,9 +102,84 @@ function CustomerDashboard(props) {
             </div>
         );
     };
-    ////Multi Select
+
+    const FilterOptionMultipleSelect = ({ label, options }) => {
+        const [selectionName, setSelectionName] = React.useState([]);
+
+        const handleChange = (event) => {
+            const {
+                target: { value },
+            } = event;
+
+            if (label === 'Price') {
+                const lastValue = Array.isArray(value) ? value[value.length - 1] : value;
+                setSelectionName(lastValue ? lastValue.split(',') : []);
+                priceSort = lastValue;
+                generateInventoryCustomerClick(storeIDs, priceSort, filters);
+            } else {
+                setSelectionName(value ? (typeof value === 'string' ? value.split(',') : value) : []);
+
+                switch (label){
+                    case "Graphics":
+                        filterGraphics = value.map(graphics => GRAPHICS.indexOf(graphics)).filter(index => index !== -1);
+                        break;
+                    case "Processor Generations":
+                        filterProcessorGen = value.map(procGen => PROCESSORGEN.indexOf(procGen)).filter(index => index !== -1);
+                        break;
+                    case "Processors":
+                        filterProcessors = value.map(processor => PROCESSOR.indexOf(processor)).filter(index => index !== -1);
+                        break;
+                    case "Storage Size":
+                        filterStorageSize = value.map(storage => storageMappings[STORAGE.indexOf(storage)]);
+                        break;
+                    case "Memory":
+                        filterMemory = value.map(memory => memoryMappings[MEMORY.indexOf(memory)]);
+                        break;
+                }
+
+                filters = [filterGraphics, filterProcessorGen, filterProcessors, filterStorageSize, filterMemory];
+                generateInventoryCustomerClick(storeIDs, priceSort, filters);
+            }
+            
+        };
     
-    const generateInventoryCustomerClick = (StoreIDs) => {
+        return (
+            <div>
+                <FormControl sx={{ m: 1, width: 250 }}>
+                    <InputLabel id={`multiple-checkbox-label-${label}`}>{label}</InputLabel>
+                    <Select
+                        labelId={`multiple-checkbox-label-${label}`}
+                        id={`multiple-checkbox-${label}`}
+                        multiple
+                        value={selectionName}
+                        onChange={handleChange}
+                        input={<OutlinedInput label={label} />}
+                        renderValue={(selected) => selected.join(', ')}
+                    >
+                        {options?.map((option) => (
+                            <MenuItem key={option} value={option}>
+                                {
+                                    label === "Price" ?
+                                    null
+                                    :
+                                    <Checkbox checked={selectionName.indexOf(option) > -1} />
+                                }
+                                <ListItemText primary={option} />
+                            </MenuItem>
+                        ))}
+                        
+                    </Select>
+                </FormControl>
+            </div>
+        );
+    };
+    ////Multi Select
+
+    const generateInventoryCustomerClick = (StoreIDs, PriceSort, Filters) => {
+        console.log(StoreIDs);
+        console.log(PriceSort);
+        console.log(Filters);
+
         instance.post("GenerateInventoryCustomer", { "StoreIDs": StoreIDs })
             .then(function (response) {
                 let tr = document.getElementById("generate-inventory-table");
@@ -141,6 +231,24 @@ function CustomerDashboard(props) {
                 </div>
                 <div className="Filter-Item">
                     <MultipleSelectCheckmarks label="Stores"/>
+                </div>
+                <div className="Filter-Item">
+                    <FilterOptionMultipleSelect label="Price" options={['ASC', 'DESC']}/>
+                </div>
+                <div className="Filter-Item">
+                    <FilterOptionMultipleSelect label="Graphics" options={GRAPHICS}/>
+                </div>
+                <div className="Filter-Item">
+                    <FilterOptionMultipleSelect label="Processor Generations" options={PROCESSORGEN}/>
+                </div>
+                <div className="Filter-Item">
+                    <FilterOptionMultipleSelect label="Processors" options={PROCESSOR}/>
+                </div>
+                <div className="Filter-Item">
+                    <FilterOptionMultipleSelect label="Storage Size" options={["128GB", "256GB", "512GB", "1TB", "2TB"]}/>
+                </div>
+                <div className="Filter-Item">
+                    <FilterOptionMultipleSelect label="Memory" options={["1GB", "4GB", "8GB", "12GB", "16GB", "32GB"]}/>
                 </div>
             </div>
             <div className="Table-Container">
