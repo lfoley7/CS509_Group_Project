@@ -51,6 +51,10 @@ function CustomerDashboard(props) {
     const MultipleSelectCheckmarks = ({ label }) => {
         const [selectionName, setSelectionName] = React.useState([]);
         const [storeNames, setStoreNames] = React.useState([]);
+
+        useEffect(() => {
+            generateInventoryCustomerClick(storeIDs, priceSort, filters);
+        }, []);
     
         const handleChange = (event) => {
             const {
@@ -203,7 +207,7 @@ function CustomerDashboard(props) {
             Filters[4] = memoryMappings;
         }
 
-        instance.post("GenerateInventoryCustomer", {"StoreIDs": StoreIDs, "CGraphics": Filters[0], "CProcessorGen": Filters[1], "CProcessor": Filters[2], "CStorageSize": Filters[3], "CMemory": Filters[4]})
+        instance.post("GenerateInventoryCustomer", {"StoreIDs": StoreIDs, "CGraphics": Filters[0], "CProcessorGen": Filters[1], "CProcessor": Filters[2], "CStorageSize": Filters[3], "CMemory": Filters[4], "PriceSort": PriceSort})
             .then(function (response) {
                 let tr = document.getElementById("generate-inventory-table");
                 if (tr.childNodes.length > 0) {
