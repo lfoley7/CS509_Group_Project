@@ -29,13 +29,13 @@ function CustomerDashboard(props) {
     const navigate = useNavigate();
 
     let storeIDs;
-    let filters;
-    let filterGraphics;
-    let filterProcessorGen;
-    let filterProcessors;
-    let filterStorageSize;
-    let filterMemory;
-    let priceSort;
+    let filters = [[],[],[],[],[]];
+    let filterGraphics = [];
+    let filterProcessorGen = [];
+    let filterProcessors = [];
+    let filterStorageSize = [];
+    let filterMemory = [];
+    let priceSort = '';
 
     ////Multi Select
     const fetchStores = async () => {
@@ -114,7 +114,7 @@ function CustomerDashboard(props) {
             if (label === 'Price') {
                 const lastValue = Array.isArray(value) ? value[value.length - 1] : value;
                 setSelectionName(lastValue ? lastValue.split(',') : []);
-                priceSort = lastValue;
+                priceSort = lastValue !== undefined ? lastValue : '';
                 generateInventoryCustomerClick(storeIDs, priceSort, filters);
             } else {
                 setSelectionName(value ? (typeof value === 'string' ? value.split(',') : value) : []);
@@ -180,7 +180,27 @@ function CustomerDashboard(props) {
         console.log(PriceSort);
         console.log(Filters);
 
-        instance.post("GenerateInventoryCustomer", { "StoreIDs": StoreIDs })
+        if (!Filters[0] || Filters[0].length === 0) {
+            Filters[0] = Array.from({ length: GRAPHICS.length }, (_, index) => index);
+        }
+
+        if (!Filters[1] || Filters[1].length === 0) {
+            Filters[1] = Array.from({ length: PROCESSORGEN.length }, (_, index) => index);
+        }
+
+        if (!Filters[2] || Filters[2].length === 0) {
+            Filters[2] = Array.from({ length: PROCESSOR.length }, (_, index) => index);
+        }
+
+        if (!Filters[3] || Filters[3].length === 0) {
+            Filters[3] = storageMappings;
+        }
+
+        if (!Filters[4] || Filters[4].length === 0) {
+            Filters[4] = memoryMappings;
+        }
+
+        instance.post("GenerateInventoryCustomer", {"StoreIDs": StoreIDs, "CGraphics": Filters[0], "CProcessorGen": Filters[1], "CProcessor": Filters[2], "CStorageSize": Filters[3], "CMemory": Filters[4]})
             .then(function (response) {
                 let tr = document.getElementById("generate-inventory-table");
                 if (tr.childNodes.length > 0) {
