@@ -20,9 +20,9 @@ function CustomerDashboard(props) {
     const PROCESSORGEN = ["13th Gen Intel", "12th Gen Intel", "11th Gen Intel", "AMD RYZEN 7000", "AMD RYZEN 6000"];
     const PROCESSOR = ["Intel Xeon", "Intel i9", "Intel i7", "AMD Ryzen 9", "AMD Ryzen 7"];
     const GRAPHICS = ["NVIDIA GeForce RTX 4090", "NVIDIA GeForce RTX 4080", "AMD Radeon Pro W6300", "AMD Radeon Pro W6400", "Intel Integrated Graphics", "Intel UHD Graphics 730", "Intel UHD Graphics 770"];
-
     const STORAGE = ["128GB", "256GB", "512GB", "1TB", "2TB"];
     const MEMORY = ["1GB", "4GB", "8GB", "12GB", "16GB", "32GB"];
+
     const storageMappings = ["128", "256", "512", "1000", "2000"];
     const memoryMappings = ["1", "4", "8", "12", "16", "32"];
 
@@ -273,10 +273,10 @@ function CustomerDashboard(props) {
                     <FilterOptionMultipleSelect label="Processors" options={PROCESSOR}/>
                 </div>
                 <div className="Filter-Item">
-                    <FilterOptionMultipleSelect label="Storage Size" options={["128GB", "256GB", "512GB", "1TB", "2TB"]}/>
+                    <FilterOptionMultipleSelect label="Storage Size" options={STORAGE}/>
                 </div>
                 <div className="Filter-Item">
-                    <FilterOptionMultipleSelect label="Memory" options={["1GB", "4GB", "8GB", "12GB", "16GB", "32GB"]}/>
+                    <FilterOptionMultipleSelect label="Memory" options={MEMORY}/>
                 </div>
             </div>
             <div className="Table-Container">
