@@ -27,7 +27,7 @@ function Navbar(props) {
                 <div className="content-container">
                     <i className="the-cs"  onClick={() => { onHandleNavClick("/")}}>The CS</i>
                     {!signedIn ?
-                        <div className="nav-bar--dropdown">
+                        <div className="nav-bar--dropdown login-signin">
                             <button
                                 className="dropbtn"
                                 onMouseOver={MouseOver}
