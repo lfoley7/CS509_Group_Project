@@ -37,6 +37,35 @@ function CustomerDashboard(props) {
     let filterStorageSize = [];
     let filterMemory = [];
     let priceSort = '';
+    let cLat = 0
+    let cLong = 0
+
+    const setLoc = () => {
+        cLat = document.getElementById("lat").value;
+        cLong = document.getElementById("long").value;
+    }
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const earthRadiusMiles = 3958.8; // Radius of the Earth in miles
+    
+        // Convert latitude and longitude from degrees to radians
+        const lat1Rad = (lat1 * Math.PI) / 180;
+        const lon1Rad = (lon1 * Math.PI) / 180;
+        const lat2Rad = (lat2 * Math.PI) / 180;
+        const lon2Rad = (lon2 * Math.PI) / 180;
+    
+        // Calculate differences between latitudes and longitudes
+        const latDiff = lat2Rad - lat1Rad;
+        const lonDiff = lon2Rad - lon1Rad;
+    
+        // Haversine formula to calculate distance
+        const a = Math.sin(latDiff / 2) ** 2 + Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(lonDiff / 2) ** 2;
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    
+        // Calculate the distance in miles
+        const distance = earthRadiusMiles * c;
+        return distance;
+    }
 
     ////Multi Select
     const fetchStores = async () => {
@@ -223,7 +252,9 @@ function CustomerDashboard(props) {
                     const name = document.createElement("td");
                     name.innerHTML = computer.CName;
                     const price = document.createElement("td");
-                    price.innerHTML = "$"+computer.CPrice;
+                    const distance = calculateDistance(cLat, cLong, computer.STLatitude, computer.STLongitude);
+                    const shipping = (distance * 0.03) + computer.CPrice;
+                    price.innerHTML = "$"+shipping;
                     const memory = document.createElement("td");
                     memory.innerHTML = computer.CMemory+"GB";
                     const storageSize = document.createElement("td");
@@ -271,6 +302,13 @@ function CustomerDashboard(props) {
                 <div className="Filter-Item">
                     <label>Want to become a Store Owner?&nbsp;</label>
                     <a onClick={() => { navigate("/register"); }}>Click here to register!</a>
+                </div>
+                <div>
+                    <label>Your Latitude: </label>
+                    <input id="lat"></input>
+                    <label>Your Longitude: </label>
+                    <input id="long"></input>
+                    <button onClick={setLoc}>Calculate Shipping</button>
                 </div>
                 <div className="Filter-Item">
                     <MultipleSelectCheckmarks label="Stores"/>
