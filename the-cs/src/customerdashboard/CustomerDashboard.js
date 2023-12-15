@@ -43,6 +43,7 @@ function CustomerDashboard(props) {
     const setLoc = () => {
         cLat = document.getElementById("lat").value;
         cLong = document.getElementById("long").value;
+        generateInventoryCustomerClick(storeIDs, priceSort, filters);
     }
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -253,7 +254,7 @@ function CustomerDashboard(props) {
                     name.innerHTML = computer.CName;
                     const price = document.createElement("td");
                     const distance = calculateDistance(cLat, cLong, computer.STLatitude, computer.STLongitude);
-                    const shipping = (distance * 0.03) + computer.CPrice;
+                    const shipping = ((distance * 0.03) + computer.CPrice).toFixed(2);
                     price.innerHTML = "$"+shipping;
                     const memory = document.createElement("td");
                     memory.innerHTML = computer.CMemory+"GB";
@@ -303,7 +304,7 @@ function CustomerDashboard(props) {
                     <label>Want to become a Store Owner?&nbsp;</label>
                     <a onClick={() => { navigate("/register"); }}>Click here to register!</a>
                 </div>
-                <div>
+                <div className="Location-Container">
                     <label>Your Latitude: </label>
                     <input id="lat"></input>
                     <label>Your Longitude: </label>
