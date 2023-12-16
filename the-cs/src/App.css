@@ -114,3 +114,7 @@ html {
   padding: 1rem;
   gap: 0.5rem;
 }
+
+.Location-Container input {
+  width: 100%
+}

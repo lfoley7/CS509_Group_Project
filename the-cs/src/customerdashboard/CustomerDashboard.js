@@ -10,6 +10,7 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
+import { Button } from "@mui/material";
 
 const instance = axios.create({
     baseURL: 'https://iggshnplye.execute-api.us-east-2.amazonaws.com/Initial/'
@@ -37,6 +38,36 @@ function CustomerDashboard(props) {
     let filterStorageSize = [];
     let filterMemory = [];
     let priceSort = '';
+    let cLat = 0
+    let cLong = 0
+
+    const setLoc = () => {
+        cLat = document.getElementById("lat").value;
+        cLong = document.getElementById("long").value;
+        generateInventoryCustomerClick(storeIDs, priceSort, filters);
+    }
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const earthRadiusMiles = 3958.8; // Radius of the Earth in miles
+    
+        // Convert latitude and longitude from degrees to radians
+        const lat1Rad = (lat1 * Math.PI) / 180;
+        const lon1Rad = (lon1 * Math.PI) / 180;
+        const lat2Rad = (lat2 * Math.PI) / 180;
+        const lon2Rad = (lon2 * Math.PI) / 180;
+    
+        // Calculate differences between latitudes and longitudes
+        const latDiff = lat2Rad - lat1Rad;
+        const lonDiff = lon2Rad - lon1Rad;
+    
+        // Haversine formula to calculate distance
+        const a = Math.sin(latDiff / 2) ** 2 + Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(lonDiff / 2) ** 2;
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    
+        // Calculate the distance in miles
+        const distance = earthRadiusMiles * c;
+        return distance;
+    }
 
     ////Multi Select
     const fetchStores = async () => {
@@ -223,7 +254,9 @@ function CustomerDashboard(props) {
                     const name = document.createElement("td");
                     name.innerHTML = computer.CName;
                     const price = document.createElement("td");
-                    price.innerHTML = "$" + computer.CPrice;
+                    const distance = calculateDistance(cLat, cLong, computer.STLatitude, computer.STLongitude);
+                    const shipping = ((distance * 0.03) + computer.CPrice).toFixed(2);
+                    price.innerHTML = "$"+shipping;
                     const memory = document.createElement("td");
                     memory.innerHTML = computer.CMemory + "GB";
                     const storageSize = document.createElement("td");
@@ -234,6 +267,19 @@ function CustomerDashboard(props) {
                     processorGen.innerHTML = PROCESSORGEN[+computer.CProcessorGen - 1];
                     const graphics = document.createElement("td");
                     graphics.innerHTML = GRAPHICS[+computer.CGraphics - 1];
+                    const buy = document.createElement("td");
+                    let buyButton = document.createElement("button")
+                    buyButton.innerHTML = "Buy Now!"
+                    buyButton.onclick = async function () {
+                        await instance.post("buyComputer", {"ComputerID": computer.ComputerID, "CPrice": computer.CPrice})
+                            .then(function (response) {
+                                window.alert("Computer Bought");
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
+                        window.location.reload();
+                    }
                     inventoryRow.onclick = function () {
                         if (comparisonsElements >= 2) {
                             console.log("too much");
@@ -319,6 +365,7 @@ function CustomerDashboard(props) {
                     inventoryRow.appendChild(memory);
                     inventoryRow.appendChild(storageSize);
                     inventoryRow.appendChild(price);
+                    inventoryRow.appendChild(buyButton);
                     document.getElementById("generate-inventory-table").appendChild(inventoryRow);
                 }
             })
@@ -334,6 +381,13 @@ function CustomerDashboard(props) {
                 <div className="Filter-Item">
                     <label>Want to become a Store Owner?&nbsp;</label>
                     <a onClick={() => { navigate("/register"); }}>Click here to register!</a>
+                </div>
+                <div className="Location-Container">
+                    <label>Your Latitude: </label>
+                    <input id="lat" style={{width: "95%"}}></input>
+                    <label>Your Longitude: </label>
+                    <input id="long" style={{width: "95%"}}></input>
+                    <button onClick={setLoc}>Calculate Shipping</button>
                 </div>
                 <div className="Filter-Item">
                     <MultipleSelectCheckmarks label="Stores" />
@@ -369,6 +423,7 @@ function CustomerDashboard(props) {
                             <th>Memory</th>
                             <th>Storage Size</th>
                             <th>Price</th>
+                            <th>Buy</th>
                         </tr>
                     </thead>
                     <tbody id="generate-inventory-table">
