@@ -301,6 +301,7 @@ function CustomerDashboard(props) {
                             })
                             .catch(function (error) {
                                 console.log(error);
+                                console.log("Couldn't Buy Computer")
                             })
                         
                         if(result){
