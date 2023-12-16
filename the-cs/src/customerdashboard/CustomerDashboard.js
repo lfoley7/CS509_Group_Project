@@ -293,6 +293,7 @@ function CustomerDashboard(props) {
                     let buyButton = document.createElement("button")
                     buyButton.innerHTML = "Buy Now!"
                     buyButton.onclick = async function () {
+
                         let result = false;
                         await instance.post("buyComputer", {"ComputerID": computer.ComputerID})
                             .then(function (response) {
