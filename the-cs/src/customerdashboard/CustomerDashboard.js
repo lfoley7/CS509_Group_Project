@@ -47,26 +47,25 @@ function CustomerDashboard(props) {
         generateInventoryCustomerClick(storeIDs, priceSort, filters);
     }
 
-    function calculateDistance(lat1, lon1, lat2, lon2) {
-        const earthRadiusMiles = 3958.8; // Radius of the Earth in miles
-    
-        // Convert latitude and longitude from degrees to radians
-        const lat1Rad = (lat1 * Math.PI) / 180;
-        const lon1Rad = (lon1 * Math.PI) / 180;
-        const lat2Rad = (lat2 * Math.PI) / 180;
-        const lon2Rad = (lon2 * Math.PI) / 180;
-    
-        // Calculate differences between latitudes and longitudes
-        const latDiff = lat2Rad - lat1Rad;
-        const lonDiff = lon2Rad - lon1Rad;
-    
-        // Haversine formula to calculate distance
-        const a = Math.sin(latDiff / 2) ** 2 + Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(lonDiff / 2) ** 2;
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    
-        // Calculate the distance in miles
-        const distance = earthRadiusMiles * c;
-        return distance;
+    function calculateDistance(lat1, lon1, lat2, lon2) 
+    {
+      var R = 6371; // km
+      var dLat = toRad(lat2-lat1);
+      var dLon = toRad(lon2-lon1);
+      var lat1 = toRad(lat1);
+      var lat2 = toRad(lat2);
+
+      var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+      var d = R * c;
+      return (d/1.609)/1.151;
+    }
+
+    // Converts numeric degrees to radians
+    function toRad(Value) 
+    {
+        return Value * Math.PI / 180;
     }
 
     ////Multi Select
@@ -222,23 +221,28 @@ function CustomerDashboard(props) {
         }
 
         if (!Filters[0] || Filters[0].length === 0) {
-            Filters[0] = Array.from({ length: GRAPHICS.length }, (_, index) => index);
+            Filters[0] = Array.from({ length: GRAPHICS.length }, (_, index) => index+1);
+            console.log(Filters[0]);
         }
 
         if (!Filters[1] || Filters[1].length === 0) {
-            Filters[1] = Array.from({ length: PROCESSORGEN.length }, (_, index) => index);
+            Filters[1] = Array.from({ length: PROCESSORGEN.length }, (_, index) => index+1);
+            console.log(Filters[1]);
         }
 
         if (!Filters[2] || Filters[2].length === 0) {
-            Filters[2] = Array.from({ length: PROCESSOR.length }, (_, index) => index);
+            Filters[2] = Array.from({ length: PROCESSOR.length }, (_, index) => index+1);
+            console.log(Filters[2]);
         }
 
         if (!Filters[3] || Filters[3].length === 0) {
             Filters[3] = storageMappings;
+            console.log(Filters[3]);
         }
 
         if (!Filters[4] || Filters[4].length === 0) {
             Filters[4] = memoryMappings;
+            console.log(Filters[4]);
         }
 
         console.log(StoreIDs);
@@ -326,9 +330,12 @@ function CustomerDashboard(props) {
                             compInventoryRow.onclick = function () {
                                 document.getElementById(computer.CName).remove();
                                 setComparisonsElements(comparisonsElements - 1);
-                                document.getElementById("comparisons-table-body").children[0].children[5].style.color = "black";
-                                document.getElementById("comparisons-table-body").children[0].children[6].style.color = "black";
-                                document.getElementById("comparisons-table-body").children[0].children[7].style.color = "black";
+                                if (document.getElementById("comparisons-table-body").children.length > 0) {
+                                    document.getElementById("comparisons-table-body").children[0].children[5].style.color = "black";
+                                    document.getElementById("comparisons-table-body").children[0].children[6].style.color = "black";
+                                    document.getElementById("comparisons-table-body").children[0].children[7].style.color = "black";
+                                }
+                                
                             }
                             compInventoryRow.appendChild(compStoreName);
                             compInventoryRow.appendChild(compName);
@@ -403,12 +410,14 @@ function CustomerDashboard(props) {
                     <label>Want to become a Store Owner?&nbsp;</label>
                     <a onClick={() => { navigate("/register"); }}>Click here to register!</a>
                 </div>
-                <div className="Location-Container">
-                    <label>Your Latitude: </label>
-                    <input id="lat" style={{width: "95%"}}></input>
-                    <label>Your Longitude: </label>
-                    <input id="long" style={{width: "95%"}}></input>
-                    <button onClick={setLoc}>Calculate Shipping</button>
+                <div className="Filter-Item">
+                    <div className="Location-Container">
+                        <label>Your Latitude: </label>
+                        <input id="lat" style={{width: "95%"}}></input>
+                        <label>Your Longitude: </label>
+                        <input id="long" style={{width: "95%"}}></input>
+                        <button onClick={setLoc}>Calculate Shipping</button>
+                    </div>
                 </div>
                 <div className="Filter-Item">
                     <MultipleSelectCheckmarks label="Stores" />
@@ -469,6 +478,9 @@ function CustomerDashboard(props) {
                     <tbody id="comparisons-table-body">
                     </tbody>
                 </table>
+                <label>
+                    Click on a row to remove it from the Comparisons table
+                </label>
             </div>
         </div>
     )

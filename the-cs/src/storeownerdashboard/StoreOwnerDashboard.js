@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import * as React from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -9,7 +10,10 @@ const instance = axios.create({
     baseURL: 'https://iggshnplye.execute-api.us-east-2.amazonaws.com/Initial/'
 });
 
+
 function StoreOwnerDashboard(props) {
+
+    const [balance, setBalance] = React.useState(0);
 
     const PROCESSORGEN = ["13th Gen Intel", "12th Gen Intel", "11th Gen Intel", "AMD RYZEN 7000", "AMD RYZEN 6000"];
     const PROCESSOR = ["Intel Xeon", "Intel i9", "Intel i7", "AMD Ryzen 9", "AMD Ryzen 7"];
@@ -71,6 +75,7 @@ function StoreOwnerDashboard(props) {
                     }
                 }
                 for (let computer of JSON.parse(response.data.body)) {
+                    setBalance(computer.Balance);
                     const inventoryRow = document.createElement("tr");
                     const name = document.createElement("td");
                     name.innerHTML = computer.CName;
@@ -119,6 +124,7 @@ function StoreOwnerDashboard(props) {
                     inventoryRow.appendChild(modify);
                     document.getElementById("generate-inventory-table").appendChild(inventoryRow);
                 }
+                console.log(balance);
             })
             .catch(function (error) {
                 console.log(error);
@@ -186,6 +192,8 @@ function StoreOwnerDashboard(props) {
             </div>
             <br /><br />
             <button onClick={generateInventory}>{"Generate Inventory"}</button>
+            <br /><br />
+            <label>Store Balance: ${balance}</label>
         </div>
     )
 };
