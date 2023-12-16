@@ -311,6 +311,7 @@ function CustomerDashboard(props) {
                             .then(function (response) {
                                 console.log("removed computer");
                                 window.alert("Computer Purchased");
+                                console.log(response);
                             })
                             .catch(function (error) {
                                 console.log(error);
