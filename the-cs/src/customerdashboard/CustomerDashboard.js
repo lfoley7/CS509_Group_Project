@@ -18,6 +18,7 @@ const instance = axios.create({
 
 function CustomerDashboard(props) {
 
+    const [comparisonsElements, setComparisonsElements] = React.useState(0);
     const PROCESSORGEN = ["13th Gen Intel", "12th Gen Intel", "11th Gen Intel", "AMD RYZEN 7000", "AMD RYZEN 6000"];
     const PROCESSOR = ["Intel Xeon", "Intel i9", "Intel i7", "AMD Ryzen 9", "AMD Ryzen 7"];
     const GRAPHICS = ["NVIDIA GeForce RTX 4090", "NVIDIA GeForce RTX 4080", "AMD Radeon Pro W6300", "AMD Radeon Pro W6400", "Intel Integrated Graphics", "Intel UHD Graphics 730", "Intel UHD Graphics 770"];
@@ -30,7 +31,7 @@ function CustomerDashboard(props) {
     const navigate = useNavigate();
 
     let storeIDs;
-    let filters = [[],[],[],[],[]];
+    let filters = [[], [], [], [], []];
     let filterGraphics = [];
     let filterProcessorGen = [];
     let filterProcessors = [];
@@ -78,7 +79,7 @@ function CustomerDashboard(props) {
             throw error;
         }
     };
-    
+
     const MultipleSelectCheckmarks = ({ label }) => {
         const [selectionName, setSelectionName] = React.useState([]);
         const [storeNames, setStoreNames] = React.useState([]);
@@ -86,16 +87,16 @@ function CustomerDashboard(props) {
         useEffect(() => {
             generateInventoryCustomerClick(storeIDs, priceSort, filters);
         }, []);
-    
+
         const handleChange = (event) => {
             const {
                 target: { value },
             } = event;
-            setSelectionName( typeof value === 'string' ? value.split(',') : value, );
+            setSelectionName(typeof value === 'string' ? value.split(',') : value,);
             storeIDs = value;
             generateInventoryCustomerClick(storeIDs, priceSort, filters);
         };
-    
+
         const handleOpen = async () => {
             try {
                 setStoreNames(await fetchStores());
@@ -103,7 +104,7 @@ function CustomerDashboard(props) {
                 console.error("Error in handleOpen:", error);
             }
         };
-    
+
         return (
             <div>
                 <FormControl sx={{ m: 1, width: 250 }}>
@@ -154,15 +155,15 @@ function CustomerDashboard(props) {
             } else {
                 setSelectionName(value ? (typeof value === 'string' ? value.split(',') : value) : []);
 
-                switch (label){
+                switch (label) {
                     case "Graphics":
-                        filterGraphics = value.map(graphics => GRAPHICS.indexOf(graphics)+1).filter(index => index !== 0);
+                        filterGraphics = value.map(graphics => GRAPHICS.indexOf(graphics) + 1).filter(index => index !== 0);
                         break;
                     case "Processor Generations":
-                        filterProcessorGen = value.map(procGen => PROCESSORGEN.indexOf(procGen)+1).filter(index => index !== 0);
+                        filterProcessorGen = value.map(procGen => PROCESSORGEN.indexOf(procGen) + 1).filter(index => index !== 0);
                         break;
                     case "Processors":
-                        filterProcessors = value.map(processor => PROCESSOR.indexOf(processor)+1).filter(index => index !== 0);
+                        filterProcessors = value.map(processor => PROCESSOR.indexOf(processor) + 1).filter(index => index !== 0);
                         break;
                     case "Storage Size":
                         filterStorageSize = value.map(storage => storageMappings[STORAGE.indexOf(storage)]);
@@ -171,13 +172,13 @@ function CustomerDashboard(props) {
                         filterMemory = value.map(memory => memoryMappings[MEMORY.indexOf(memory)]);
                         break;
                 }
-                
+
                 filters = [filterGraphics, filterProcessorGen, filterProcessors, filterStorageSize, filterMemory];
                 generateInventoryCustomerClick(storeIDs, priceSort, filters);
             }
-            
+
         };
-    
+
         return (
             <div>
                 <FormControl sx={{ m: 1, width: 250 }}>
@@ -195,14 +196,14 @@ function CustomerDashboard(props) {
                             <MenuItem key={option} value={option}>
                                 {
                                     label === "Price" ?
-                                    null
-                                    :
-                                    <Checkbox checked={selectionName.indexOf(option) > -1} />
+                                        null
+                                        :
+                                        <Checkbox checked={selectionName.indexOf(option) > -1} />
                                 }
                                 <ListItemText primary={option} />
                             </MenuItem>
                         ))}
-                        
+
                     </Select>
                 </FormControl>
             </div>
@@ -238,7 +239,7 @@ function CustomerDashboard(props) {
             Filters[4] = memoryMappings;
         }
 
-        instance.post("GenerateInventoryCustomer", {"StoreIDs": StoreIDs, "CGraphics": Filters[0], "CProcessorGen": Filters[1], "CProcessor": Filters[2], "CStorageSize": Filters[3], "CMemory": Filters[4], "PriceSort": PriceSort})
+        instance.post("GenerateInventoryCustomer", { "StoreIDs": StoreIDs, "CGraphics": Filters[0], "CProcessorGen": Filters[1], "CProcessor": Filters[2], "CStorageSize": Filters[3], "CMemory": Filters[4], "PriceSort": PriceSort })
             .then(function (response) {
                 let tr = document.getElementById("generate-inventory-table");
                 if (tr.childNodes.length > 0) {
@@ -257,9 +258,9 @@ function CustomerDashboard(props) {
                     const shipping = ((distance * 0.03) + computer.CPrice).toFixed(2);
                     price.innerHTML = "$"+shipping;
                     const memory = document.createElement("td");
-                    memory.innerHTML = computer.CMemory+"GB";
+                    memory.innerHTML = computer.CMemory + "GB";
                     const storageSize = document.createElement("td");
-                    storageSize.innerHTML = computer.CStorageSize+"GB";
+                    storageSize.innerHTML = computer.CStorageSize + "GB";
                     const processor = document.createElement("td");
                     processor.innerHTML = PROCESSOR[+computer.CProcessor - 1];
                     const processorGen = document.createElement("td");
@@ -279,6 +280,83 @@ function CustomerDashboard(props) {
                             })
                         window.location.reload();
                     }
+                    inventoryRow.onclick = function () {
+                        if (comparisonsElements >= 2) {
+                            console.log("too much");
+                        } else {
+                            const compInventoryRow = document.createElement("tr");
+                            compInventoryRow.id = computer.CName;
+                            const compStoreName = document.createElement("td");
+                            compStoreName.innerHTML = computer.STName;
+                            const compName = document.createElement("td");
+                            compName.innerHTML = computer.CName;
+                            const compPrice = document.createElement("td");
+                            compPrice.innerHTML = "$" + computer.CPrice;
+                            const compMemory = document.createElement("td");
+                            compMemory.innerHTML = computer.CMemory + "GB";
+                            const compStorageSize = document.createElement("td");
+                            compStorageSize.innerHTML = computer.CStorageSize + "GB";
+                            const compProcessor = document.createElement("td");
+                            compProcessor.innerHTML = PROCESSOR[+computer.CProcessor - 1];
+                            const compProcessorGen = document.createElement("td");
+                            compProcessorGen.innerHTML = PROCESSORGEN[+computer.CProcessorGen - 1];
+                            const compGraphics = document.createElement("td");
+                            compGraphics.innerHTML = GRAPHICS[+computer.CGraphics - 1];
+                            compInventoryRow.onclick = function () {
+                                document.getElementById(computer.CName).remove();
+                                setComparisonsElements(comparisonsElements - 1);
+                                document.getElementById("comparisons-table-body").children[0].children[5].style.color = "black";
+                                document.getElementById("comparisons-table-body").children[0].children[6].style.color = "black";
+                                document.getElementById("comparisons-table-body").children[0].children[7].style.color = "black";
+                            }
+                            compInventoryRow.appendChild(compStoreName);
+                            compInventoryRow.appendChild(compName);
+                            compInventoryRow.appendChild(compGraphics);
+                            compInventoryRow.appendChild(compProcessorGen);
+                            compInventoryRow.appendChild(compProcessor);
+                            compInventoryRow.appendChild(compMemory);
+                            compInventoryRow.appendChild(compStorageSize);
+                            compInventoryRow.appendChild(compPrice);
+                            document.getElementById("comparisons-table-body").appendChild(compInventoryRow);
+                            setComparisonsElements(comparisonsElements + 1);
+                            if (document.getElementById("comparisons-table-body").children.length == 2) {
+                                let firstMemory = document.getElementById("comparisons-table-body").children[0].children[5].innerHTML
+                                firstMemory = firstMemory.substring(firstMemory - 2);
+                                let secondMemory = document.getElementById("comparisons-table-body").children[1].children[5].innerHTML;
+                                secondMemory = secondMemory.substring(secondMemory - 2);
+                                if (firstMemory > secondMemory) {
+                                    document.getElementById("comparisons-table-body").children[0].children[5].style.color = "green";
+                                    document.getElementById("comparisons-table-body").children[1].children[5].style.color = "red";
+                                } else if (firstMemory < secondMemory) {
+                                    document.getElementById("comparisons-table-body").children[1].children[5].style.color = "green";
+                                    document.getElementById("comparisons-table-body").children[0].children[5].style.color = "red";
+                                }
+                                let firstStorageSize = document.getElementById("comparisons-table-body").children[0].children[6].innerHTML;
+                                firstStorageSize = firstStorageSize.substring(firstStorageSize - 2);
+                                let secondStorageSize = document.getElementById("comparisons-table-body").children[1].children[6].innerHTML;
+                                secondStorageSize = secondStorageSize.substring(secondStorageSize - 2);
+                                if (firstStorageSize > secondStorageSize) {
+                                    document.getElementById("comparisons-table-body").children[0].children[6].style.color = "green";
+                                    document.getElementById("comparisons-table-body").children[1].children[6].style.color = "red";
+                                } else if (firstStorageSize < secondStorageSize) {
+                                    document.getElementById("comparisons-table-body").children[1].children[6].style.color = "green";
+                                    document.getElementById("comparisons-table-body").children[0].children[6].style.color = "red";
+                                }
+                                let firstPrice = document.getElementById("comparisons-table-body").children[0].children[7].innerHTML;
+                                firstPrice = firstPrice.substring(1);
+                                let secondPrice = document.getElementById("comparisons-table-body").children[1].children[7].innerHTML;
+                                secondPrice = secondPrice.substring(1);
+                                if (firstPrice < secondPrice) {
+                                    document.getElementById("comparisons-table-body").children[0].children[7].style.color = "green";
+                                    document.getElementById("comparisons-table-body").children[1].children[7].style.color = "red";
+                                } else if (firstPrice > secondPrice) {
+                                    document.getElementById("comparisons-table-body").children[1].children[7].style.color = "green";
+                                    document.getElementById("comparisons-table-body").children[0].children[7].style.color = "red";
+                                }
+                                console.log(firstMemory + " " + secondMemory + " " + firstStorageSize + " " + secondStorageSize + " " + firstPrice + " " + secondPrice + " ");
+                            }
+                        }
+                    };
                     inventoryRow.appendChild(storeName);
                     inventoryRow.appendChild(name);
                     inventoryRow.appendChild(graphics);
@@ -312,25 +390,25 @@ function CustomerDashboard(props) {
                     <button onClick={setLoc}>Calculate Shipping</button>
                 </div>
                 <div className="Filter-Item">
-                    <MultipleSelectCheckmarks label="Stores"/>
+                    <MultipleSelectCheckmarks label="Stores" />
                 </div>
                 <div className="Filter-Item">
-                    <FilterOptionMultipleSelect label="Price" options={['ASC', 'DESC']}/>
+                    <FilterOptionMultipleSelect label="Price" options={['ASC', 'DESC']} />
                 </div>
                 <div className="Filter-Item">
-                    <FilterOptionMultipleSelect label="Graphics" options={GRAPHICS}/>
+                    <FilterOptionMultipleSelect label="Graphics" options={GRAPHICS} />
                 </div>
                 <div className="Filter-Item">
-                    <FilterOptionMultipleSelect label="Processor Generations" options={PROCESSORGEN}/>
+                    <FilterOptionMultipleSelect label="Processor Generations" options={PROCESSORGEN} />
                 </div>
                 <div className="Filter-Item">
-                    <FilterOptionMultipleSelect label="Processors" options={PROCESSOR}/>
+                    <FilterOptionMultipleSelect label="Processors" options={PROCESSOR} />
                 </div>
                 <div className="Filter-Item">
-                    <FilterOptionMultipleSelect label="Storage Size" options={STORAGE}/>
+                    <FilterOptionMultipleSelect label="Storage Size" options={STORAGE} />
                 </div>
                 <div className="Filter-Item">
-                    <FilterOptionMultipleSelect label="Memory" options={MEMORY}/>
+                    <FilterOptionMultipleSelect label="Memory" options={MEMORY} />
                 </div>
             </div>
             <div className="Table-Container">
@@ -349,6 +427,25 @@ function CustomerDashboard(props) {
                         </tr>
                     </thead>
                     <tbody id="generate-inventory-table">
+                    </tbody>
+                </table>
+                <label>
+                    Click on a row to add it to the Comparisons table
+                </label>
+                <table className="Table-Custom">
+                    <thead>
+                        <tr>
+                            <th>Store</th>
+                            <th>Name</th>
+                            <th>Graphics</th>
+                            <th>Processor Gen</th>
+                            <th>Processor</th>
+                            <th>Memory</th>
+                            <th>Storage Size</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparisons-table-body">
                     </tbody>
                 </table>
             </div>

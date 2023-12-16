@@ -49,6 +49,16 @@ function StoreOwnerDashboard(props) {
             });
     }
 
+    const modifyPrice = (CPrice, ComputerID) => {
+        instance.post("modifyPrice", { "CPrice": CPrice, "ComputerID": ComputerID })
+            .then(function (response) {
+                window.alert("Pice Modified!");
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
     const generateInventory = () => {
         const StoreID = props.storeID; // CHANGE ME TO CORRECT GENERATION OF ID
         instance.post("generateInventory", { "StoreID": StoreID })
@@ -84,6 +94,19 @@ function StoreOwnerDashboard(props) {
                     removeComputerBtn.onclick = function () {
                         removeComputer(computer.ComputerID);
                     }
+
+                    const newPrice = document.createElement("td");
+                    const priceTextbox = document.createElement("input");
+                    newPrice.appendChild(priceTextbox);
+
+                    const modify = document.createElement("td");
+                    const modifyPriceButton = document.createElement("button");
+                    modifyPriceButton.innerHTML = "Modify Price"
+                    modify.append(modifyPriceButton);
+                    modifyPriceButton.onclick = function () {
+                        modifyPrice(priceTextbox.value, computer.ComputerID);
+                    }
+
                     inventoryRow.appendChild(name);
                     inventoryRow.appendChild(price);
                     inventoryRow.appendChild(memory);
@@ -92,6 +115,8 @@ function StoreOwnerDashboard(props) {
                     inventoryRow.appendChild(processorGen);
                     inventoryRow.appendChild(graphics);
                     inventoryRow.appendChild(remove);
+                    inventoryRow.appendChild(newPrice);
+                    inventoryRow.appendChild(modify);
                     document.getElementById("generate-inventory-table").appendChild(inventoryRow);
                 }
             })
@@ -151,6 +176,8 @@ function StoreOwnerDashboard(props) {
                             <th>Processor Gen</th>
                             <th>Graphics</th>
                             <th>Remove Computer</th>
+                            <th>New Price</th>
+                            <th>Modify Price</th>
                         </tr>
                     </thead>
                     <tbody id="generate-inventory-table">
