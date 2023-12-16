@@ -73,6 +73,7 @@ function CustomerDashboard(props) {
     const fetchStores = async () => {
         try {
             const response = await instance.post("fetchStore");
+            console.log(response);
             return JSON.parse(response.data.body);
         } catch (error) {
             console.error("Error fetching stores:", error);
@@ -217,6 +218,7 @@ function CustomerDashboard(props) {
 
         if (!StoreIDs || StoreIDs.length === 0) {
             StoreIDs = (await fetchStores()).map(store => store.StoreID);
+            console.log(StoreIDs);
         }
 
         if (!Filters[0] || Filters[0].length === 0) {
@@ -239,8 +241,10 @@ function CustomerDashboard(props) {
             Filters[4] = memoryMappings;
         }
 
+        console.log(StoreIDs);
         instance.post("GenerateInventoryCustomer", { "StoreIDs": StoreIDs, "CGraphics": Filters[0], "CProcessorGen": Filters[1], "CProcessor": Filters[2], "CStorageSize": Filters[3], "CMemory": Filters[4], "PriceSort": PriceSort })
             .then(function (response) {
+                console.log(response);
                 let tr = document.getElementById("generate-inventory-table");
                 if (tr.childNodes.length > 0) {
                     while (tr.childNodes.length > 0) {
@@ -248,6 +252,7 @@ function CustomerDashboard(props) {
                     }
                 }
                 for (let computer of JSON.parse(response.data.body)) {
+                    console.log(computer.STName);
                     const inventoryRow = document.createElement("tr");
                     const storeName = document.createElement("td");
                     storeName.innerHTML = computer.STName;
@@ -271,14 +276,30 @@ function CustomerDashboard(props) {
                     let buyButton = document.createElement("button")
                     buyButton.innerHTML = "Buy Now!"
                     buyButton.onclick = async function () {
-                        await instance.post("buyComputer", {"ComputerID": computer.ComputerID, "CPrice": computer.CPrice})
+                        let result = false;
+                        await instance.post("buyComputer", {"ComputerID": computer.ComputerID})
                             .then(function (response) {
-                                window.alert("Computer Bought");
+                                console.log(computer.ComputerID);
+                                result = true;
                             })
                             .catch(function (error) {
                                 console.log(error);
                             })
+                        
+                        if(result){
+                            
+                            await instance.post("removecomputer", {"ComputerID": computer.ComputerID})
+                            .then(function (response) {
+                                console.log("removed computer");
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
+                        }    
+
+
                         window.location.reload();
+                        
                     }
                     inventoryRow.onclick = function () {
                         if (comparisonsElements >= 2) {
