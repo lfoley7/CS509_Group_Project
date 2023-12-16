@@ -306,9 +306,9 @@ function CustomerDashboard(props) {
                 </div>
                 <div className="Location-Container">
                     <label>Your Latitude: </label>
-                    <input id="lat"></input>
+                    <input id="lat" style={{width: "95%"}}></input>
                     <label>Your Longitude: </label>
-                    <input id="long"></input>
+                    <input id="long" style={{width: "95%"}}></input>
                     <button onClick={setLoc}>Calculate Shipping</button>
                 </div>
                 <div className="Filter-Item">
