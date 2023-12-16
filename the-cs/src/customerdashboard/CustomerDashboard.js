@@ -301,7 +301,7 @@ function CustomerDashboard(props) {
                             })
                             .catch(function (error) {
                                 console.log(error);
-                                console.log("Couldn't Buy Computer")
+                                window.alert("Error Buying Computer");
                             })
                         
                         if(result){
@@ -309,9 +309,11 @@ function CustomerDashboard(props) {
                             await instance.post("removecomputer", {"ComputerID": computer.ComputerID})
                             .then(function (response) {
                                 console.log("removed computer");
+                                window.alert("Computer Purchased");
                             })
                             .catch(function (error) {
                                 console.log(error);
+                                window.alert("Error Buying Computer");
                             })
                         }    
 
