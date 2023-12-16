@@ -11,6 +11,8 @@ import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import { Button } from "@mui/material";
+import Box from '@mui/material/Box';
+import Slider from '@mui/material/Slider';
 
 const instance = axios.create({
     baseURL: 'https://iggshnplye.execute-api.us-east-2.amazonaws.com/Initial/'
@@ -30,6 +32,9 @@ function CustomerDashboard(props) {
 
     const navigate = useNavigate();
 
+    const [minPrice, setMinPrice] = React.useState(0);
+    const [maxPrice, setMaxPrice] = React.useState(1000000000);
+
     let storeIDs;
     let filters = [[], [], [], [], []];
     let filterGraphics = [];
@@ -38,18 +43,24 @@ function CustomerDashboard(props) {
     let filterStorageSize = [];
     let filterMemory = [];
     let priceSort = '';
-    let cLat = 0
-    let cLong = 0
+    let cLat = 0;
+    let cLong = 0;
 
     const setLoc = () => {
         cLat = document.getElementById("lat").value;
         cLong = document.getElementById("long").value;
-        generateInventoryCustomerClick(storeIDs, priceSort, filters);
+        generateInventoryCustomerClick(storeIDs, priceSort, filters, minPrice, maxPrice);
+    }
+
+    const setMinMax = () => {
+        setMinPrice(document.getElementById("min-price").value);
+        setMaxPrice(document.getElementById("max-price").value);
+        generateInventoryCustomerClick(storeIDs, priceSort, filters, minPrice, maxPrice);
     }
 
     function calculateDistance(lat1, lon1, lat2, lon2) 
     {
-      var R = 6371; // km
+      var R = 6371;
       var dLat = toRad(lat2-lat1);
       var dLon = toRad(lon2-lon1);
       var lat1 = toRad(lat1);
@@ -85,7 +96,7 @@ function CustomerDashboard(props) {
         const [storeNames, setStoreNames] = React.useState([]);
 
         useEffect(() => {
-            generateInventoryCustomerClick(storeIDs, priceSort, filters);
+            generateInventoryCustomerClick(storeIDs, priceSort, filters, minPrice, maxPrice);
         }, []);
 
         const handleChange = (event) => {
@@ -94,7 +105,7 @@ function CustomerDashboard(props) {
             } = event;
             setSelectionName(typeof value === 'string' ? value.split(',') : value,);
             storeIDs = value;
-            generateInventoryCustomerClick(storeIDs, priceSort, filters);
+            generateInventoryCustomerClick(storeIDs, priceSort, filters, minPrice, maxPrice);
         };
 
         const handleOpen = async () => {
@@ -151,7 +162,7 @@ function CustomerDashboard(props) {
                 const lastValue = Array.isArray(value) ? value[value.length - 1] : value;
                 setSelectionName(lastValue ? lastValue.split(',') : []);
                 priceSort = lastValue !== undefined ? lastValue : '';
-                generateInventoryCustomerClick(storeIDs, priceSort, filters);
+                generateInventoryCustomerClick(storeIDs, priceSort, filters, minPrice, maxPrice);
             } else {
                 setSelectionName(value ? (typeof value === 'string' ? value.split(',') : value) : []);
 
@@ -174,7 +185,7 @@ function CustomerDashboard(props) {
                 }
 
                 filters = [filterGraphics, filterProcessorGen, filterProcessors, filterStorageSize, filterMemory];
-                generateInventoryCustomerClick(storeIDs, priceSort, filters);
+                generateInventoryCustomerClick(storeIDs, priceSort, filters, minPrice, maxPrice);
             }
 
         };
@@ -210,7 +221,7 @@ function CustomerDashboard(props) {
         );
     };
 
-    const generateInventoryCustomerClick = async (StoreIDs, PriceSort, Filters) => {
+    const generateInventoryCustomerClick = async (StoreIDs, PriceSort, Filters, MinP, MaxP) => {
         // console.log(StoreIDs);
         // console.log(PriceSort);
         // console.log(Filters);
@@ -246,7 +257,7 @@ function CustomerDashboard(props) {
         }
 
         console.log(StoreIDs);
-        instance.post("GenerateInventoryCustomer", { "StoreIDs": StoreIDs, "CGraphics": Filters[0], "CProcessorGen": Filters[1], "CProcessor": Filters[2], "CStorageSize": Filters[3], "CMemory": Filters[4], "PriceSort": PriceSort })
+        instance.post("GenerateInventoryCustomer", { "StoreIDs": StoreIDs, "CGraphics": Filters[0], "CProcessorGen": Filters[1], "CProcessor": Filters[2], "CStorageSize": Filters[3], "CMemory": Filters[4], "PriceSort": PriceSort, "MinPrice": MinP, "MaxPrice": MaxP })
             .then(function (response) {
                 console.log(response);
                 let tr = document.getElementById("generate-inventory-table");
@@ -263,9 +274,11 @@ function CustomerDashboard(props) {
                     const name = document.createElement("td");
                     name.innerHTML = computer.CName;
                     const price = document.createElement("td");
+                    price.innerHTML = "$"+computer.CPrice;
                     const distance = calculateDistance(cLat, cLong, computer.STLatitude, computer.STLongitude);
                     const shipping = ((distance * 0.03) + computer.CPrice).toFixed(2);
-                    price.innerHTML = "$"+shipping;
+                    const totalPrice = document.createElement("td");
+                    totalPrice.innerHTML = "$"+shipping;
                     const memory = document.createElement("td");
                     memory.innerHTML = computer.CMemory + "GB";
                     const storageSize = document.createElement("td");
@@ -393,6 +406,7 @@ function CustomerDashboard(props) {
                     inventoryRow.appendChild(memory);
                     inventoryRow.appendChild(storageSize);
                     inventoryRow.appendChild(price);
+                    inventoryRow.appendChild(totalPrice);
                     inventoryRow.appendChild(buyButton);
                     document.getElementById("generate-inventory-table").appendChild(inventoryRow);
                 }
@@ -411,19 +425,22 @@ function CustomerDashboard(props) {
                     <a onClick={() => { navigate("/register"); }}>Click here to register!</a>
                 </div>
                 <div className="Filter-Item">
-                    <div className="Location-Container">
-                        <label>Your Latitude: </label>
-                        <input id="lat" style={{width: "95%"}}></input>
-                        <label>Your Longitude: </label>
-                        <input id="long" style={{width: "95%"}}></input>
-                        <button onClick={setLoc}>Calculate Shipping</button>
-                    </div>
+                    <label>Your Latitude: </label>
+                    <input id="lat" style={{width: "60%"}}></input>
+                    <label>Your Longitude: </label>
+                    <input id="long" style={{width: "60%"}}></input>
+                    <button onClick={setLoc}>Calculate Shipping</button>
                 </div>
                 <div className="Filter-Item">
                     <MultipleSelectCheckmarks label="Stores" />
                 </div>
                 <div className="Filter-Item">
                     <FilterOptionMultipleSelect label="Price" options={['ASC', 'DESC']} />
+                    <label>Min Price: </label>
+                    <input id="min-price" style={{width: "60%"}}></input>
+                    <label>Max Price: </label>
+                    <input id="max-price" style={{width: "60%"}}></input>
+                    <button onClick={setMinMax}>Price Filter</button>
                 </div>
                 <div className="Filter-Item">
                     <FilterOptionMultipleSelect label="Graphics" options={GRAPHICS} />
@@ -453,6 +470,7 @@ function CustomerDashboard(props) {
                             <th>Memory</th>
                             <th>Storage Size</th>
                             <th>Price</th>
+                            <th>Total Price</th>
                             <th>Buy</th>
                         </tr>
                     </thead>
