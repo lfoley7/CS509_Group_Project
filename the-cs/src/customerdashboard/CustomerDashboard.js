@@ -293,15 +293,7 @@ function CustomerDashboard(props) {
                     let buyButton = document.createElement("button")
                     buyButton.innerHTML = "Buy Now!"
                     buyButton.onclick = async function () {
-                        await instance.post("GenerateInventoryCustomer", { "StoreIDs": StoreIDs, "CGraphics": Filters[0], "CProcessorGen": Filters[1], "CProcessor": Filters[2], "CStorageSize": Filters[3], "CMemory": Filters[4], "PriceSort": PriceSort, "MinPrice": MinP, "MaxPrice": MaxP })
-                        .then(function (response) {
-                            console.log(computer.ComputerID);
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                            window.alert("Error Buying Computer");
-                        })
-
+                        
                         let result = false;
                         await instance.post("buyComputer", {"ComputerID": computer.ComputerID})
                             .then(function (response) {
@@ -318,8 +310,13 @@ function CustomerDashboard(props) {
                             await instance.post("removecomputer", {"ComputerID": computer.ComputerID})
                             .then(function (response) {
                                 console.log("removed computer");
-                                window.alert("Computer Purchased");
-                                console.log(response);
+                                let text = response.data.body;
+                                if(text === "Not found error") {
+                                    window.alert("Error Purchasing: Computer No Longer Available")
+                                }else{
+                                    window.alert("Computer Purchased");
+                                }
+                            
                             })
                             .catch(function (error) {
                                 console.log(error);
